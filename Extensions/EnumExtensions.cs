@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+
 using Aragas.Core.Wrappers;
 
 namespace Aragas.Core.Extensions
@@ -16,7 +17,7 @@ namespace Aragas.Core.Extensions
             {
                 var typeName = $"{packetName}Packet";
                 var type = AppDomainWrapper.GetTypeFromNameAndAbstract<T>(typeName, assembly);
-                packets[(int) packetName] = type != null ? (Func<T>) (() => type) : null;
+                packets[(int) packetName] = type != null ? (Func<T>) (() => (T) Activator.CreateInstance(type)) : null;
             }
 
             return packets;
@@ -30,7 +31,7 @@ namespace Aragas.Core.Extensions
             {
                 var typeName = $"{packetName}Packet";
                 var type = AppDomainWrapper.GetTypeFromNameAndAbstract<T>(typeName, assembly);
-                packets[(int) packetName] = type != null ? (Func<T>) (() => type) : null;
+                packets[(int) packetName] = type != null ? (Func<T>) (() => (T) Activator.CreateInstance(type)) : null;
             }
         }
         public static void CreatePacketInstancesRef<T>(this Enum packetType, ref Func<T>[] packets, Assembly assembly)
@@ -47,7 +48,7 @@ namespace Aragas.Core.Extensions
             {
                 var typeName = $"{packetName}Packet";
                 var type = AppDomainWrapper.GetTypeFromNameAndAbstract<T>(typeName, assembly);
-                packets[(int) packetName] = type != null ? (Func<T>) (() => type) : null;
+                packets[(int) packetName] = type != null ? (Func<T>) (() => (T) Activator.CreateInstance(type)) : null;
             }
         }
     }

@@ -30,30 +30,30 @@ namespace Aragas.Core.Wrappers
         public static Assembly[] GetAssemblies() { return Instance.GetAssemblies(); }
         public static Assembly LoadAssembly(byte[] assemblyData) { return Instance.LoadAssembly(assemblyData); }
 
-        public static T GetTypeFromNameAndInterface<T>(string className, Assembly assembly)
+        public static Type GetTypeFromNameAndInterface<T>(string className, Assembly assembly)
         {
             foreach (var typeInfo in new List<TypeInfo>(assembly.DefinedTypes))
                 if (typeInfo.Name == className)
                     foreach (var type in new List<Type>(typeInfo.ImplementedInterfaces))
                         if (type == typeof (T))
-                            return (T) Activator.CreateInstance(typeInfo.AsType());
+                            return typeInfo.AsType();
 
-            return default(T);
+            return null;
         }
-        public static T GetTypeFromNameAndAbstract<T>(string className, Assembly assembly)
+        public static Type GetTypeFromNameAndAbstract<T>(string className, Assembly assembly)
         {
             foreach (var typeInfo in new List<TypeInfo>(assembly.DefinedTypes))
                 if (typeInfo.Name == className)
                     if (typeInfo.IsSubclassOf(typeof (T)))
-                        return (T) Activator.CreateInstance(typeInfo.AsType());
+                        return typeInfo.AsType();
 
-            return default(T);
+            return null;
         }
-        public static object GetTypeFromName(string className, Assembly assembly)
+        public static Type GetTypeFromName(string className, Assembly assembly)
         {
             foreach (var typeInfo in new List<TypeInfo>(assembly.DefinedTypes))
                 if (typeInfo.Name == className)
-                    return Activator.CreateInstance(typeInfo.AsType());
+                    return typeInfo.AsType();
 
             return null;
         }

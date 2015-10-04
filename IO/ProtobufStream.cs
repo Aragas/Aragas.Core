@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
@@ -58,10 +59,13 @@ namespace Aragas.Core.IO
         // -- String
         public void WriteString(string value, int length = 0)
         {
-            var data = Encoding.GetBytes(value);
+            var lengthBytes = new VarInt(value.Length).InByteArray();
+            var final = new byte[value.Length + lengthBytes.Length];
 
-            WriteByteArray(new VarInt(data.Length).InByteArray());
-            WriteByteArray(data);
+            Buffer.BlockCopy(lengthBytes, 0, final, 0, lengthBytes.Length);
+            Buffer.BlockCopy(Encoding.GetBytes(value), 0, final, lengthBytes.Length, value.Length);
+
+            WriteByteArray(final);
         }
 
         // -- VarInt
@@ -79,7 +83,7 @@ namespace Aragas.Core.IO
         // -- SByte & Byte
         public void WriteSByte(sbyte value)
         {
-            WriteByte(unchecked((byte)value));
+            WriteByte(unchecked((byte) value));
         }
         public void WriteByte(byte value)
         {
@@ -93,7 +97,7 @@ namespace Aragas.Core.IO
                 _buffer = tempBuff;
             }
             else
-                _buffer = new byte[] { value };
+                _buffer = new[] { value };
         }
 
         // -- Short & UShort
@@ -106,11 +110,10 @@ namespace Aragas.Core.IO
         }
         public void WriteUShort(ushort value)
         {
-            WriteByteArray(new byte[]
-            {
+            WriteByteArray(
                 (byte) ((value & 0xFF00) >> 8),
                 (byte) (value & 0xFF)
-            });
+            );
         }
 
         // -- Int & UInt
@@ -123,13 +126,12 @@ namespace Aragas.Core.IO
         }
         public void WriteUInt(uint value)
         {
-            WriteByteArray(new[]
-            {
+            WriteByteArray(
                 (byte)((value & 0xFF000000) >> 24),
                 (byte)((value & 0xFF0000) >> 16),
                 (byte)((value & 0xFF00) >> 8),
                 (byte)(value & 0xFF)
-            });
+            );
         }
 
         // -- Long & ULong
@@ -142,8 +144,7 @@ namespace Aragas.Core.IO
         }
         public void WriteULong(ulong value)
         {
-            WriteByteArray(new[]
-            {
+            WriteByteArray(
                 (byte)((value & 0xFF00000000000000) >> 56),
                 (byte)((value & 0xFF000000000000) >> 48),
                 (byte)((value & 0xFF0000000000) >> 40),
@@ -152,7 +153,7 @@ namespace Aragas.Core.IO
                 (byte)((value & 0xFF0000) >> 16),
                 (byte)((value & 0xFF00) >> 8),
                 (byte)(value & 0xFF)
-            });
+            );
         }
 
         // -- BigInt & UBigInt
@@ -185,7 +186,7 @@ namespace Aragas.Core.IO
 
             WriteByteArray(bytes);
         }
-        
+
         // -- StringArray
         public void WriteStringArray(params string[] value)
         {
@@ -256,7 +257,7 @@ namespace Aragas.Core.IO
 
                 if (length > 5)
                     throw new ProtobufReadingException("VarInt may not be longer than 28 bits.");
-                
+
                 if ((current & 0x80) != 128)
                     break;
             }
@@ -311,7 +312,7 @@ namespace Aragas.Core.IO
 
         private void Purge()
         {
-            var lenBytes = new VarInt(_buffer.Length).InByteArray();//GetVarIntBytes(_buffer.Length);
+            var lenBytes = new VarInt(_buffer.Length).InByteArray();
 
             var tempBuff = new byte[_buffer.Length + lenBytes.Length];
 
