@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
 using System.Text;
 
 using Aragas.Core.Data;
@@ -54,194 +52,182 @@ namespace Aragas.Core.IO
         }
 
 
-        #region Vars
+        #region Write
 
         // -- String
-        public void WriteString(string value, int length = 0)
+        public void Write(string value, int length = 0)
         {
-            var lengthBytes = new VarInt(value.Length).InByteArray();
-            var final = new byte[value.Length + lengthBytes.Length];
+            byte[] lengthBytes;
+            byte[] final;
+
+            if (length == 0)
+            {
+                length = value.Length;
+
+                lengthBytes = new VarInt(value.Length).InByteArray();
+                final = new byte[value.Length + lengthBytes.Length];
+            }
+            else
+            {
+                lengthBytes = new VarInt(length).InByteArray();
+                final = new byte[length + lengthBytes.Length];
+            }
 
             Buffer.BlockCopy(lengthBytes, 0, final, 0, lengthBytes.Length);
-            Buffer.BlockCopy(Encoding.GetBytes(value), 0, final, lengthBytes.Length, value.Length);
+            Buffer.BlockCopy(Encoding.GetBytes(value), 0, final, lengthBytes.Length, length);
 
-            WriteByteArray(final);
+            Write(final);
         }
 
         // -- VarInt
-        public void WriteVarInt(VarInt value)
+        public void Write(VarInt value)
         {
-            WriteByteArray(value.InByteArray());
+            Write(value.InByteArray());
         }
 
         // -- Boolean
-        public void WriteBoolean(bool value)
+        public void Write(bool value)
         {
-            WriteByte(Convert.ToByte(value));
+            Write(Convert.ToByte(value));
         }
 
         // -- SByte & Byte
-        public void WriteSByte(sbyte value)
+        public void Write(sbyte value)
         {
-            WriteByte(unchecked((byte) value));
+            Write(unchecked((byte) value));
         }
-        public void WriteByte(byte value)
+        public void Write(byte value)
         {
-            if (_buffer != null)
-            {
-                var tempBuff = new byte[_buffer.Length + 1];
-
-                Buffer.BlockCopy(_buffer, 0, tempBuff, 0, _buffer.Length);
-                tempBuff[_buffer.Length] = value;
-
-                _buffer = tempBuff;
-            }
-            else
-                _buffer = new[] { value };
+            Write(new[] { value });
         }
 
         // -- Short & UShort
-        public void WriteShort(short value)
+        public void Write(short value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            WriteByteArray(bytes);
+            Write(bytes);
         }
-        public void WriteUShort(ushort value)
+        public void Write(ushort value)
         {
-            WriteByteArray(
+            Write(new[]
+            {
                 (byte) ((value & 0xFF00) >> 8),
-                (byte) (value & 0xFF)
-            );
+                (byte) ((value & 0xFF))
+            });
         }
 
         // -- Int & UInt
-        public void WriteInt(int value)
+        public void Write(int value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            WriteByteArray(bytes);
+            Write(bytes);
         }
-        public void WriteUInt(uint value)
+        public void Write(uint value)
         {
-            WriteByteArray(
-                (byte)((value & 0xFF000000) >> 24),
-                (byte)((value & 0xFF0000) >> 16),
-                (byte)((value & 0xFF00) >> 8),
-                (byte)(value & 0xFF)
-            );
+            Write(new[]
+            {
+                (byte) ((value & 0xFF000000) >> 24),
+                (byte) ((value & 0xFF0000) >> 16),
+                (byte) ((value & 0xFF00) >> 8),
+                (byte) ((value & 0xFF))
+            });
         }
 
         // -- Long & ULong
-        public void WriteLong(long value)
+        public void Write(long value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            WriteByteArray(bytes);
+            Write(bytes);
         }
-        public void WriteULong(ulong value)
+        public void Write(ulong value)
         {
-            WriteByteArray(
-                (byte)((value & 0xFF00000000000000) >> 56),
-                (byte)((value & 0xFF000000000000) >> 48),
-                (byte)((value & 0xFF0000000000) >> 40),
-                (byte)((value & 0xFF00000000) >> 32),
-                (byte)((value & 0xFF000000) >> 24),
-                (byte)((value & 0xFF0000) >> 16),
-                (byte)((value & 0xFF00) >> 8),
-                (byte)(value & 0xFF)
-            );
-        }
-
-        // -- BigInt & UBigInt
-        public void WriteBigInteger(BigInteger value)
-        {
-            var bytes = value.ToByteArray();
-            Array.Reverse(bytes);
-
-            WriteByteArray(bytes);
-        }
-        public void WriteUBigInteger(BigInteger value)
-        {
-            throw new NotImplementedException();
+            Write(new[]
+            {
+                (byte) ((value & 0xFF00000000000000) >> 56),
+                (byte) ((value & 0xFF000000000000) >> 48),
+                (byte) ((value & 0xFF0000000000) >> 40),
+                (byte) ((value & 0xFF00000000) >> 32),
+                (byte) ((value & 0xFF000000) >> 24),
+                (byte) ((value & 0xFF0000) >> 16),
+                (byte) ((value & 0xFF00) >> 8),
+                (byte) ((value & 0xFF))
+            });
         }
 
         // -- Float
-        public void WriteFloat(float value)
+        public void Write(float value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            WriteByteArray(bytes);
+            Write(bytes);
         }
 
         // -- Double
-        public void WriteDouble(double value)
+        public void Write(double value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            WriteByteArray(bytes);
+            Write(bytes);
         }
 
         // -- StringArray
-        public void WriteStringArray(params string[] value)
+        public void Write(string[] value)
         {
             var length = value.Length;
 
             for (var i = 0; i < length; i++)
-                WriteString(value[i]);
+                Write(value[i]);
         }
 
         // -- VarIntArray
-        public void WriteVarIntArray(params int[] value)
+        public void Write(VarInt[] value)
         {
             var length = value.Length;
 
             for (var i = 0; i < length; i++)
-                WriteVarInt(value[i]);
+                Write(value[i]);
         }
 
         // -- IntArray
-        public void WriteIntArray(params int[] value)
+        public void Write(int[] value)
         {
             var length = value.Length;
 
             for (var i = 0; i < length; i++)
-                WriteInt(value[i]);
+                Write(value[i]);
         }
 
         // -- ByteArray
-        public void WriteByteArray(params byte[] value)
+        public void Write(byte[] value)
         {
             if (_buffer != null)
             {
-                var tempLength = _buffer.Length + value.Length;
-                var tempBuff = new byte[tempLength];
-
-                Buffer.BlockCopy(_buffer, 0, tempBuff, 0, _buffer.Length);
-                Buffer.BlockCopy(value, 0, tempBuff, _buffer.Length, value.Length);
-
-                _buffer = tempBuff;
+                Array.Resize(ref _buffer, _buffer.Length + value.Length);
+                Array.Copy(value, 0, _buffer, _buffer.Length - value.Length, value.Length);
             }
             else
                 _buffer = value;
         }
 
-        #endregion Vars
+        #endregion Write
 
 
-        // -- Read methods
+        #region Read
 
         public byte ReadByte()
         {
             var buffer = new byte[1];
-
+            
             Receive(buffer, 0, buffer.Length);
-
+            
             return buffer[0];
         }
 
@@ -278,12 +264,7 @@ namespace Aragas.Core.IO
             return result;
         }
 
-        public string ReadLine()
-        {
-            throw new NotImplementedException();
-        }
-
-        // -- Read methods
+        #endregion Read
 
 
         private void Send(byte[] buffer, int offset, int count)
@@ -303,8 +284,8 @@ namespace Aragas.Core.IO
 
         public void SendPacket(ref ProtobufPacket packet)
         {
-            WriteVarInt(packet.ID);
-            WriteVarInt(packet.Origin);
+            Write(packet.ID);
+            Write(packet.Origin);
             packet.WritePacket(this);
             Purge();
         }
@@ -313,11 +294,10 @@ namespace Aragas.Core.IO
         private void Purge()
         {
             var lenBytes = new VarInt(_buffer.Length).InByteArray();
-
             var tempBuff = new byte[_buffer.Length + lenBytes.Length];
-
-            Buffer.BlockCopy(lenBytes, 0, tempBuff, 0, lenBytes.Length);
-            Buffer.BlockCopy(_buffer, 0, tempBuff, lenBytes.Length, _buffer.Length);
+            
+            Array.Copy(lenBytes, 0, tempBuff, 0, lenBytes.Length);
+            Array.Copy(_buffer, 0, tempBuff, lenBytes.Length, _buffer.Length);
 
             Send(tempBuff, 0, tempBuff.Length);
 

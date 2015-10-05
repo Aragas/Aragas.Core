@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace Aragas.Core.Data
 {
@@ -14,6 +16,11 @@ namespace Aragas.Core.Data
         public static implicit operator VarInt(int value)
         {
             return new VarInt(value);
+        }
+
+        public string ToString(IFormatProvider cultureInfo)
+        {
+            return _value.ToString(cultureInfo);
         }
 
         public static implicit operator int (VarInt value)
@@ -43,6 +50,11 @@ namespace Aragas.Core.Data
             }
 
             return bytes.ToArray();
+        }
+
+        public static VarInt Parse(string s, IFormatProvider provider)
+        {
+            return int.Parse(s, provider);
         }
     }
 }

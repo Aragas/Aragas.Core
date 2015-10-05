@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Aragas.Core.Interfaces;
 using Aragas.Core.Wrappers;
 
@@ -34,7 +35,6 @@ namespace Aragas.Core.IO
             Buffer.BlockCopy(decrypted, 0, buffer, offset, decrypted.Length);
             return length;
         }
-
         public void Write(byte[] buffer, int offset, int count)
         {
             var encrypted = _encryptCipher.ProcessBytes(buffer, offset, count);

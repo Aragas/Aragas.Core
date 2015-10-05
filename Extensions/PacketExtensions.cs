@@ -7,9 +7,9 @@ namespace Aragas.Core.Extensions
 {
     public static class PacketExtensions
     {
-        public static void WriteTimeSpan(this IPacketStream stream, TimeSpan timeSpan)
+        public static void Write(this IPacketStream stream, TimeSpan timeSpan)
         {
-            stream.WriteLong(timeSpan.Ticks);
+            stream.Write(timeSpan.Ticks);
         }
         public static TimeSpan ReadTimeSpan(this IPacketDataReader reader)
         {
@@ -17,9 +17,9 @@ namespace Aragas.Core.Extensions
         }
 
 
-        public static void WriteDateTime(this IPacketStream stream, DateTime dateTime)
+        public static void Write(this IPacketStream stream, DateTime dateTime)
         {
-            stream.WriteLong(dateTime.Ticks);
+            stream.Write(dateTime.Ticks);
         }
         public static DateTime ReadDateTime(this IPacketDataReader reader)
         {
@@ -29,53 +29,53 @@ namespace Aragas.Core.Extensions
 
         #region Vector3
 
-        public static void WriteVector3_Byte(this IPacketStream stream, Vector3 vector3)
+        public static void Write_Byte(this IPacketStream stream, Vector3 vector3)
         {
-            stream.WriteByte((byte) vector3.X);
-            stream.WriteByte((byte) vector3.Y);
-            stream.WriteByte((byte) vector3.Z);
+            stream.Write((byte) vector3.X);
+            stream.Write((byte) vector3.Y);
+            stream.Write((byte) vector3.Z);
         }
-        public static void WriteVector3_SByte(this IPacketStream stream, Vector3 vector3)
+        public static void Write_SByte(this IPacketStream stream, Vector3 vector3)
         {
-            stream.WriteSByte((sbyte) vector3.X);
-            stream.WriteSByte((sbyte) vector3.Y);
-            stream.WriteSByte((sbyte) vector3.Z);
+            stream.Write((sbyte) vector3.X);
+            stream.Write((sbyte) vector3.Y);
+            stream.Write((sbyte) vector3.Z);
         }
-        public static void WriteVector3_UShort(this IPacketStream stream, Vector3 vector3)
+        public static void Write_UShort(this IPacketStream stream, Vector3 vector3)
         {
-            stream.WriteUShort((ushort) vector3.X);
-            stream.WriteUShort((ushort) vector3.Y);
-            stream.WriteUShort((ushort) vector3.Z);
+            stream.Write((ushort) vector3.X);
+            stream.Write((ushort) vector3.Y);
+            stream.Write((ushort) vector3.Z);
         }
-        public static void WriteVector3_Short(this IPacketStream stream, Vector3 vector3)
+        public static void Write_Short(this IPacketStream stream, Vector3 vector3)
         {
-            stream.WriteShort((short) vector3.X);
-            stream.WriteShort((short) vector3.Y);
-            stream.WriteShort((short) vector3.Z);
+            stream.Write((short) vector3.X);
+            stream.Write((short) vector3.Y);
+            stream.Write((short) vector3.Z);
         }
-        public static void WriteVector3_Float(this IPacketStream stream, Vector3 vector3)
+        public static void Write_Float(this IPacketStream stream, Vector3 vector3)
         {
-            stream.WriteFloat(vector3.X);
-            stream.WriteFloat(vector3.Y);
-            stream.WriteFloat(vector3.Z);
+            stream.Write(vector3.X);
+            stream.Write(vector3.Y);
+            stream.Write(vector3.Z);
         }
-        public static void WriteVector3_Double(this IPacketStream stream, Vector3 vector3)
+        public static void Write_Double(this IPacketStream stream, Vector3 vector3)
         {
-            stream.WriteDouble(vector3.X);
-            stream.WriteDouble(vector3.Y);
-            stream.WriteDouble(vector3.Z);
+            stream.Write((double) vector3.X);
+            stream.Write((double) vector3.Y);
+            stream.Write((double) vector3.Z);
         }
-        public static void WriteVector3_SByteFixedPoint(this IPacketStream stream, Vector3 vector3)
+        public static void Write_SByteFixedPoint(this IPacketStream stream, Vector3 vector3)
         {
-            stream.WriteSByte((sbyte) (vector3.X * 32.0f));
-            stream.WriteSByte((sbyte) (vector3.Y * 32.0f));
-            stream.WriteSByte((sbyte) (vector3.Z * 32.0f));
+            stream.Write((sbyte) (vector3.X * 32.0f));
+            stream.Write((sbyte) (vector3.Y * 32.0f));
+            stream.Write((sbyte) (vector3.Z * 32.0f));
         }
-        public static void WriteVector3_IntFixedPoint(this IPacketStream stream, Vector3 vector3)
+        public static void Write_IntFixedPoint(this IPacketStream stream, Vector3 vector3)
         {
-            stream.WriteInt((int) (vector3.X * 32.0f));
-            stream.WriteInt((int) (vector3.Y * 32.0f));
-            stream.WriteInt((int) (vector3.Z * 32.0f));
+            stream.Write((int) (vector3.X * 32.0f));
+            stream.Write((int) (vector3.Y * 32.0f));
+            stream.Write((int) (vector3.Z * 32.0f));
         }
 
         public static Vector3 ReadVector3_Byte(this IPacketDataReader reader)

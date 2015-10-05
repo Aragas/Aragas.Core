@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Numerics;
 
 using Aragas.Core.Data;
 using Aragas.Core.Packets;
@@ -8,39 +7,36 @@ namespace Aragas.Core.Interfaces
 {
     public interface IPacketStreamWrite
     {
-        void WriteString(String value, Int32 length = 0);
+        void Write(String value, Int32 length = 0);
 
-        void WriteVarInt(VarInt value);
+        void Write(VarInt value);
 
-        void WriteBoolean(Boolean value);
+        void Write(Boolean value);
 
-        void WriteSByte(SByte value);
-        void WriteByte(Byte value);
+        void Write(SByte value);
+        void Write(Byte value);
 
-        void WriteShort(Int16 value);
-        void WriteUShort(UInt16 value);
+        void Write(Int16 value);
+        void Write(UInt16 value);
 
-        void WriteInt(Int32 value);
-        void WriteUInt(UInt32 value);
+        void Write(Int32 value);
+        void Write(UInt32 value);
 
-        void WriteLong(Int64 value);
-        void WriteULong(UInt64 value);
+        void Write(Int64 value);
+        void Write(UInt64 value);
 
-        void WriteBigInteger(BigInteger value);
-        void WriteUBigInteger(BigInteger value);
+        void Write(Double value);
 
-        void WriteDouble(Double value);
-
-        void WriteFloat(Single value);
+        void Write(Single value);
 
 
-        void WriteStringArray(params String[] value);
+        void Write(String[] value);
 
-        void WriteVarIntArray(params Int32[] value);
+        void Write(Int32[] value);
 
-        void WriteIntArray(params Int32[] value);
+        void Write(VarInt[] value);
 
-        void WriteByteArray(params Byte[] value);
+        void Write(Byte[] value);
     }
 
     public interface IPacketStreamRead
@@ -50,8 +46,6 @@ namespace Aragas.Core.Interfaces
         VarInt ReadVarInt();
 
         Byte[] ReadByteArray(Int32 value);
-
-        String ReadLine();
     }
     
     public interface IPacketStreamConnection

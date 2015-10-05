@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Numerics;
 
 using Aragas.Core.Data;
+using Aragas.Core.Packets;
 
 namespace Aragas.Core.Interfaces
 {
@@ -24,9 +24,6 @@ namespace Aragas.Core.Interfaces
 
         Int64 ReadLong();
         UInt64 ReadULong();
-
-        BigInteger ReadBigInteger();
-        BigInteger ReadUBigInteger();
 
         Single ReadFloat();
 

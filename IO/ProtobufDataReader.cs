@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Numerics;
 using System.Text;
 
 using Aragas.Core.Data;
@@ -32,7 +31,9 @@ namespace Aragas.Core.IO
         // -- String
         public string ReadString(int length = 0)
         {
-            length = ReadVarInt();
+            if(length == 0)
+                length = ReadVarInt();
+
             var stringBytes = ReadByteArray(length);
 
             return Encoding.GetString(stringBytes, 0, stringBytes.Length);
@@ -123,19 +124,6 @@ namespace Aragas.Core.IO
                    ((ulong) ReadByte() << 16) |
                    ((ulong) ReadByte() << 8) |
                     (ulong) ReadByte());
-        }
-
-        // -- BigInt & UBigInt
-        public BigInteger ReadBigInteger()
-        {
-            var bytes = ReadByteArray(16);
-            Array.Reverse(bytes);
-
-            return new BigInteger(bytes);
-        }
-        public BigInteger ReadUBigInteger()
-        {
-            throw new NotImplementedException();
         }
 
         // -- Floats

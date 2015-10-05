@@ -1,14 +1,14 @@
 ﻿using System;
-
+using Aragas.Core.Data;
 using Aragas.Core.Interfaces;
 
 namespace Aragas.Core.Packets
 {
     public abstract class ProtobufPacket
     {
-        public abstract Int32 ID { get; }
+        public abstract VarInt ID { get; }
 
-        public Int32 Origin { get; set; }
+        public VarInt Origin { get; set; } = new VarInt(0);
 
         /// <summary>
         /// Read packet from IPacketDataReader.
