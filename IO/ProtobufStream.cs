@@ -76,13 +76,13 @@ namespace Aragas.Core.IO
             Buffer.BlockCopy(lengthBytes, 0, final, 0, lengthBytes.Length);
             Buffer.BlockCopy(Encoding.GetBytes(value), 0, final, lengthBytes.Length, length);
 
-            Write(final);
+            ToBuffer(final);
         }
 
         // -- VarInt
         public void Write(VarInt value)
         {
-            Write(value.InByteArray());
+            ToBuffer(value.InByteArray());
         }
 
         // -- Boolean
@@ -98,7 +98,7 @@ namespace Aragas.Core.IO
         }
         public void Write(byte value)
         {
-            Write(new[] { value });
+            ToBuffer(new[] { value });
         }
 
         // -- Short & UShort
@@ -107,11 +107,11 @@ namespace Aragas.Core.IO
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            Write(bytes);
+            ToBuffer(bytes);
         }
         public void Write(ushort value)
         {
-            Write(new[]
+            ToBuffer(new[]
             {
                 (byte) ((value & 0xFF00) >> 8),
                 (byte) ((value & 0xFF))
@@ -124,11 +124,11 @@ namespace Aragas.Core.IO
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            Write(bytes);
+            ToBuffer(bytes);
         }
         public void Write(uint value)
         {
-            Write(new[]
+            ToBuffer(new[]
             {
                 (byte) ((value & 0xFF000000) >> 24),
                 (byte) ((value & 0xFF0000) >> 16),
@@ -143,11 +143,11 @@ namespace Aragas.Core.IO
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            Write(bytes);
+            ToBuffer(bytes);
         }
         public void Write(ulong value)
         {
-            Write(new[]
+            ToBuffer(new[]
             {
                 (byte) ((value & 0xFF00000000000000) >> 56),
                 (byte) ((value & 0xFF000000000000) >> 48),
@@ -166,7 +166,7 @@ namespace Aragas.Core.IO
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            Write(bytes);
+            ToBuffer(bytes);
         }
 
         // -- Double
@@ -175,13 +175,14 @@ namespace Aragas.Core.IO
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
-            Write(bytes);
+            ToBuffer(bytes);
         }
 
         // -- StringArray
         public void Write(string[] value)
         {
             var length = value.Length;
+            Write(new VarInt(length));
 
             for (var i = 0; i < length; i++)
                 Write(value[i]);
@@ -191,6 +192,7 @@ namespace Aragas.Core.IO
         public void Write(VarInt[] value)
         {
             var length = value.Length;
+            Write(new VarInt(length));
 
             for (var i = 0; i < length; i++)
                 Write(value[i]);
@@ -200,13 +202,14 @@ namespace Aragas.Core.IO
         public void Write(int[] value)
         {
             var length = value.Length;
+            Write(new VarInt(length));
 
             for (var i = 0; i < length; i++)
                 Write(value[i]);
         }
 
         // -- ByteArray
-        public void Write(byte[] value)
+        private void ToBuffer(byte[] value)
         {
             if (_buffer != null)
             {
@@ -215,6 +218,13 @@ namespace Aragas.Core.IO
             }
             else
                 _buffer = value;
+        }
+        public void Write(byte[] value)
+        {
+            var length = value.Length;
+            Write(new VarInt(length));
+
+            ToBuffer(value);
         }
 
         #endregion Write

@@ -28,31 +28,104 @@ namespace Aragas.Core.IO
             IsServer = isServer;
         }
 
-        // -- String
-        public string ReadString(int length = 0)
-        {
-            if(length == 0)
-                length = ReadVarInt();
 
-            var stringBytes = ReadByteArray(length);
+        // -- Anything
+        public T Read<T>(T value = default(T), int length = 0)
+        {
+            var type = typeof(T);
+
+            if (length > 0)
+            {
+                if (type == typeof(string))
+                    return (T) Convert.ChangeType(ReadString(length), typeof(T));
+
+                if (type == typeof(string[]))
+                    return (T) Convert.ChangeType(ReadStringArray(length), typeof(T));
+                if (type == typeof(VarInt[]))
+                    return (T) Convert.ChangeType(ReadVarIntArray(length), typeof(T));
+                if (type == typeof(int[]))
+                    return (T) Convert.ChangeType(ReadIntArray(length), typeof(T));
+                if (type == typeof(byte[]))
+                    return (T) Convert.ChangeType(ReadByteArray(length), typeof(T));
+
+                return value;
+            }
+
+
+            if (type == typeof(string))
+                return (T) Convert.ChangeType(ReadString(), typeof(T));
+
+            if (type == typeof(VarInt))
+                return (T) Convert.ChangeType(ReadVarInt(), typeof(T));
+
+
+            if (type == typeof(bool))
+                return (T) Convert.ChangeType(ReadBoolean(), typeof(T));
+
+            if (type == typeof(sbyte))
+                return (T) Convert.ChangeType(ReadSByte(), typeof(T));
+            if (type == typeof(byte))
+                return (T) Convert.ChangeType(ReadByte(), typeof(T));
+
+            if (type == typeof(short))
+                return (T) Convert.ChangeType(ReadShort(), typeof(T));
+            if (type == typeof(ushort))
+                return (T) Convert.ChangeType(ReadUShort(), typeof(T));
+
+            if (type == typeof(int))
+                return (T) Convert.ChangeType(ReadInt(), typeof(T));
+            if (type == typeof(uint))
+                return (T) Convert.ChangeType(ReadUInt(), typeof(T));
+
+            if (type == typeof(long))
+                return (T) Convert.ChangeType(ReadLong(), typeof(T));
+            if (type == typeof(ulong))
+                return (T) Convert.ChangeType(ReadULong(), typeof(T));
+
+            if (type == typeof(float))
+                return (T) Convert.ChangeType(ReadFloat(), typeof(T));
+
+            if (type == typeof(double))
+                return (T) Convert.ChangeType(ReadDouble(), typeof(T));
+
+            if (type == typeof(string[]))
+                return (T) Convert.ChangeType(ReadStringArray(), typeof(T));
+            if (type == typeof(VarInt[]))
+                return (T) Convert.ChangeType(ReadVarIntArray(), typeof(T));
+            if (type == typeof(int[]))
+                return (T) Convert.ChangeType(ReadIntArray(), typeof(T));
+            if (type == typeof(byte[]))
+                return (T) Convert.ChangeType(ReadByteArray(), typeof(T));
+
+
+            return value;
+        }
+
+        // -- String
+        private string ReadString(int length = 0)
+        {
+            if (length == 0)
+                length = Read<VarInt>();
+
+            var stringBytes = Read<byte[]>(null, length);
 
             return Encoding.GetString(stringBytes, 0, stringBytes.Length);
         }
 
         // -- VarInt
-        public VarInt ReadVarInt()
+        private VarInt ReadVarInt()
         {
             uint result = 0;
             int length = 0;
 
             while (true)
             {
-                var current = ReadByte();
+                var current = Read<byte>();
                 result |= (current & 0x7Fu) << length++ * 7;
 
                 if (length > 5)
                     throw new ProtobufReadingException("VarInt may not be longer than 28 bits.");
-                
+
                 if ((current & 0x80) != 128)
                     break;
             }
@@ -60,140 +133,160 @@ namespace Aragas.Core.IO
         }
 
         // -- Boolean
-        public bool ReadBoolean()
+        private bool ReadBoolean()
         {
-            return Convert.ToBoolean(ReadByte());
+            return Convert.ToBoolean(Read<byte>());
         }
 
         // -- SByte & Byte
-        public sbyte ReadSByte()
+        private sbyte ReadSByte()
         {
-            return unchecked((sbyte)ReadByte());
+            return unchecked((sbyte) Read<byte>());
         }
-        public byte ReadByte()
+        private byte ReadByte()
         {
-            return (byte)_stream.ReadByte();
+            return (byte) _stream.ReadByte();
         }
 
         // -- Short & UShort
-        public short ReadShort()
+        private short ReadShort()
         {
-            var bytes = ReadByteArray(2);
+            var bytes = Read<byte[]>(null, 2);
             Array.Reverse(bytes);
 
             return BitConverter.ToInt16(bytes, 0);
         }
-        public ushort ReadUShort()
+        private ushort ReadUShort()
         {
-            return (ushort)((ReadByte() << 8) | ReadByte());
+            return (ushort) ((Read<byte>() << 8) | Read<byte>());
         }
 
         // -- Int & UInt
-        public int ReadInt()
+        private int ReadInt()
         {
-            var bytes = ReadByteArray(4);
+            var bytes = Read<byte[]>(null, 4);
             Array.Reverse(bytes);
 
             return BitConverter.ToInt32(bytes, 0);
         }
-        public uint ReadUInt()
+        private uint ReadUInt()
         {
-            return (uint)(
-                (ReadByte() << 24) |
-                (ReadByte() << 16) |
-                (ReadByte() << 8) |
-                 ReadByte());
+            return (uint) (
+                (Read<byte>() << 24) |
+                (Read<byte>() << 16) |
+                (Read<byte>() << 8) |
+                (Read<byte>()));
         }
 
         // -- Long & ULong
-        public long ReadLong()
+        private long ReadLong()
         {
-            var bytes = ReadByteArray(8);
+            var bytes = Read<byte[]>(null, 8);
             Array.Reverse(bytes);
 
             return BitConverter.ToInt64(bytes, 0);
         }
-        public ulong ReadULong()
+        private ulong ReadULong()
         {
             return unchecked(
-                   ((ulong) ReadByte() << 56) |
-                   ((ulong) ReadByte() << 48) |
-                   ((ulong) ReadByte() << 40) |
-                   ((ulong) ReadByte() << 32) |
-                   ((ulong) ReadByte() << 24) |
-                   ((ulong) ReadByte() << 16) |
-                   ((ulong) ReadByte() << 8) |
-                    (ulong) ReadByte());
+                   ((ulong) Read<byte>() << 56) |
+                   ((ulong) Read<byte>() << 48) |
+                   ((ulong) Read<byte>() << 40) |
+                   ((ulong) Read<byte>() << 32) |
+                   ((ulong) Read<byte>() << 24) |
+                   ((ulong) Read<byte>() << 16) |
+                   ((ulong) Read<byte>() << 8) |
+                    (ulong) Read<byte>());
         }
 
         // -- Floats
-        public float ReadFloat()
+        private float ReadFloat()
         {
-            var bytes = ReadByteArray(4);
+            var bytes = Read<byte[]>(null, 4);
             Array.Reverse(bytes);
 
             return BitConverter.ToSingle(bytes, 0);
         }
 
         // -- Doubles
-        public double ReadDouble()
+        private double ReadDouble()
         {
-            var bytes = ReadByteArray(8);
+            var bytes = Read<byte[]>(null, 8);
             Array.Reverse(bytes);
 
             return BitConverter.ToDouble(bytes, 0);
         }
 
         // -- StringArray
-        public string[] ReadStringArray(int value)
+        private string[] ReadStringArray()
         {
-            var myStrings = new string[value];
+            var length = Read<VarInt>();
+            return Read<string[]>(null, length);
+        }
+        private string[] ReadStringArray(int length)
+        {
+            var myStrings = new string[length];
 
-            for (var i = 0; i < value; i++)
-                myStrings[i] = ReadString();
+            for (var i = 0; i < length; i++)
+                myStrings[i] = Read<string>();
 
             return myStrings;
         }
 
         // -- VarIntArray
-        public int[] ReadVarIntArray(int value)
+        private VarInt[] ReadVarIntArray()
         {
-            var myInts = new int[value];
+            var length = Read<VarInt>();
+            return Read<VarInt[]>(null, length);
+        }
+        private VarInt[] ReadVarIntArray(int length)
+        {
+            var myInts = new VarInt[length];
 
-            for (var i = 0; i < value; i++)
-                myInts[i] = ReadVarInt();
+            for (var i = 0; i < length; i++)
+                myInts[i] = Read<VarInt>();
 
             return myInts;
         }
 
         // -- IntArray
-        public int[] ReadIntArray(int value)
+        private int[] ReadIntArray()
         {
-            var myInts = new int[value];
+            var length = Read<VarInt>();
+            return Read<int[]>(null, length);
+        }
+        private int[] ReadIntArray(int length)
+        {
+            var myInts = new int[length];
 
-            for (var i = 0; i < value; i++)
+            for (var i = 0; i < length; i++)
                 myInts[i] = ReadInt();
 
             return myInts;
         }
 
         // -- ByteArray
-        public byte[] ReadByteArray(int value)
+        private byte[] ReadByteArray()
         {
-            var myBytes = new byte[value];
+            var length = Read<VarInt>();
+            return Read<byte[]>(null, length);
+        }
+        private byte[] ReadByteArray(int length)
+        {
+            var myBytes = new byte[length];
 
             var bytesRead = _stream.Read(myBytes, 0, myBytes.Length);
 
             while (true)
             {
-                if (bytesRead != value)
+                if (bytesRead != length)
                 {
-                    var newSize = value - bytesRead;
+                    var newSize = length - bytesRead;
                     var bytesRead1 = _stream.Read(myBytes, bytesRead - 1, newSize);
 
                     if (bytesRead1 != newSize)
                     {
-                        value = newSize;
+                        length = newSize;
                         bytesRead = bytesRead1;
                     }
                     else break;

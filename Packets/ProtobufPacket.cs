@@ -1,5 +1,4 @@
-﻿using System;
-using Aragas.Core.Data;
+﻿using Aragas.Core.Data;
 using Aragas.Core.Interfaces;
 
 namespace Aragas.Core.Packets
