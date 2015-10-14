@@ -54,6 +54,7 @@
     <Compile Include="Wrappers\InputWrapper.cs" />
     <Compile Include="Wrappers\NetworkTCPClientWrapper.cs" />
     <Compile Include="Wrappers\NetworkTCPServerWrapper.cs" />
+    <Compile Include="Wrappers\LuaWrapper.cs" />
     <Compile Include="Wrappers\ThreadWrapper.cs" />
   </ItemGroup>
   <Choose>

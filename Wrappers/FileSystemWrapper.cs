@@ -13,6 +13,7 @@ namespace Aragas.Core.Wrappers
         IFolder SettingsFolder { get; }
         IFolder LogFolder { get; }
         IFolder CrashLogFolder { get; }
+        IFolder LuaFolder { get; }
     }
 
     public static class FileSystemWrapper
@@ -33,6 +34,7 @@ namespace Aragas.Core.Wrappers
         public static IFolder SettingsFolder => Instance.SettingsFolder;
         public static IFolder LogFolder => Instance.LogFolder;
         public static IFolder CrashLogFolder => Instance.CrashLogFolder;
+        public static IFolder LuaFolder => Instance.LuaFolder;
 
         static readonly JsonConverter[] Converters = {
         };
