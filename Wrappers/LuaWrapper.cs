@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Aragas.Core.Wrappers
 {
@@ -9,10 +10,22 @@ namespace Aragas.Core.Wrappers
         Object[] CallFunction(string functionName, params object[] args);
     }
 
+    public interface ILuaTable
+    {
+        Object this[Object field] { get; set; }
+        Object this[String field] { get; set; }
+
+        Dictionary<Object, Object> ToDictionary();
+
+        List<Object> ToList();
+        Object[] ToArray();
+    }
+
     public interface ILuaWrapper
     {
         ILua Create();
         ILua Create(string scriptName);
+        ILuaTable Create(ILua lua, string tableName);
     }
 
     public static class LuaWrapper
@@ -31,5 +44,7 @@ namespace Aragas.Core.Wrappers
 
         public static ILua Create() { return Instance.Create(); }
         public static ILua Create(string scriptName) { return Instance.Create(scriptName); }
+
+        public static ILuaTable Create(ILua lua, string tableName) { return Instance.Create(lua, tableName); }
     }
 }
