@@ -5,6 +5,8 @@ namespace Aragas.Core.Wrappers
 {
     public interface INetworkTCPClient : IDisposable
     {
+        int RefreshConnectionInfoTime { get; set; }
+
         String IP { get; }
         Boolean Connected { get; }
         Int32 DataAvailable { get; }

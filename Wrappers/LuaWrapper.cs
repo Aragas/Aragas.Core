@@ -5,6 +5,8 @@ namespace Aragas.Core.Wrappers
 {
     public interface ILua
     {
+        bool ReloadFile();
+
         Object this[string index] { get; set; }
 
         Object[] CallFunction(string functionName, params object[] args);
