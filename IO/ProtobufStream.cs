@@ -260,18 +260,22 @@ namespace Aragas.Core.IO
             return (int) result;
         }
 
-        public byte[] ReadByteArray(int value)
+        public byte[] ReadByteArray(int size)
         {
-            var result = new byte[value];
-            if (value == 0) return result;
-            int n = value;
-            while (true)
+            if (size == 0)
+                return new byte[size];
+
+            var msg = new byte[size];
+            var readSoFar = 0;
+            while (readSoFar < size)
             {
-                n -= Receive(result, value - n, n);
-                if (n == 0)
-                    break;
+                var read = Receive(msg, readSoFar, msg.Length - readSoFar);
+                readSoFar += read;
+                if (read == 0)
+                    break;   // connection was broken
             }
-            return result;
+
+            return msg;
         }
 
         #endregion Read
