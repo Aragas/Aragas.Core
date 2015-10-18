@@ -273,28 +273,20 @@ namespace Aragas.Core.IO
         }
         private byte[] ReadByteArray(int length)
         {
-            var myBytes = new byte[length];
+            if (length == 0)
+                return new byte[length];
 
-            var bytesRead = _stream.Read(myBytes, 0, myBytes.Length);
-
-            while (true)
+            var msg = new byte[length];
+            var readSoFar = 0;
+            while (readSoFar < length)
             {
-                if (bytesRead != length)
-                {
-                    var newSize = length - bytesRead;
-                    var bytesRead1 = _stream.Read(myBytes, bytesRead - 1, newSize);
-
-                    if (bytesRead1 != newSize)
-                    {
-                        length = newSize;
-                        bytesRead = bytesRead1;
-                    }
-                    else break;
-                }
-                else break;
+                var read = _stream.Read(msg, readSoFar, msg.Length - readSoFar);
+                readSoFar += read;
+                if (read == 0)
+                    break;   // connection was broken
             }
 
-            return myBytes;
+            return msg;
         }
 
 

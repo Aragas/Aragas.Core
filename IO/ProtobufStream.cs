@@ -260,14 +260,14 @@ namespace Aragas.Core.IO
             return (int) result;
         }
 
-        public byte[] ReadByteArray(int size)
+        public byte[] ReadByteArray(int length)
         {
-            if (size == 0)
-                return new byte[size];
+            if (length == 0)
+                return new byte[length];
 
-            var msg = new byte[size];
+            var msg = new byte[length];
             var readSoFar = 0;
-            while (readSoFar < size)
+            while (readSoFar < length)
             {
                 var read = Receive(msg, readSoFar, msg.Length - readSoFar);
                 readSoFar += read;

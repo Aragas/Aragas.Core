@@ -45,7 +45,7 @@ namespace Aragas.Core.Interfaces
 
         VarInt ReadVarInt();
 
-        Byte[] ReadByteArray(Int32 value);
+        Byte[] ReadByteArray(Int32 length);
     }
     
     public interface IPacketStreamConnection
