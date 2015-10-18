@@ -28,6 +28,11 @@ namespace Aragas.Core.IO
             _decryptCipher.Init(false, new ParametersWithIV(new KeyParameter(key), key, 0, 16));
         }
 
+        public void Write(byte[] buffer, int offset, int count)
+        {
+            var encrypted = _encryptCipher.ProcessBytes(buffer, offset, count);
+            _tcp.Send(encrypted, 0, encrypted.Length);
+        }
         public int Read(byte[] buffer, int offset, int count)
         {
             var length = _tcp.Receive(buffer, offset, count);
@@ -35,10 +40,10 @@ namespace Aragas.Core.IO
             Buffer.BlockCopy(decrypted, 0, buffer, offset, decrypted.Length);
             return length;
         }
-        public void Write(byte[] buffer, int offset, int count)
+        public byte[] ReadByteArray(int length)
         {
-            var encrypted = _encryptCipher.ProcessBytes(buffer, offset, count);
-            _tcp.Send(encrypted, 0, encrypted.Length);
+            var buffer = _tcp.ReadByteArray(length);
+            return _decryptCipher.ProcessBytes(buffer, 0, length);
         }
 
         public void Dispose()

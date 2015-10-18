@@ -262,6 +262,12 @@ namespace Aragas.Core.IO
 
         public byte[] ReadByteArray(int length)
         {
+            if (EncryptionEnabled)
+                return _aesStream.ReadByteArray(length);
+            else
+                return _tcp.ReadByteArray(length);
+
+            /*
             if (length == 0)
                 return new byte[length];
 
@@ -276,6 +282,7 @@ namespace Aragas.Core.IO
             }
 
             return msg;
+            */
         }
 
         #endregion Read

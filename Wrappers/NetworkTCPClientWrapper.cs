@@ -18,6 +18,7 @@ namespace Aragas.Core.Wrappers
 
         void Send(Byte[] bytes, Int32 offset, Int32 count);
         Int32 Receive(Byte[] buffer, Int32 offset, Int32 count);
+        Byte[] ReadByteArray(Int32 length);
 
 
         Stream GetStream();
