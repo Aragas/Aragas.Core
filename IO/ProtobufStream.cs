@@ -22,12 +22,12 @@ namespace Aragas.Core.IO
         private Encoding Encoding { get; } = Encoding.UTF8;
 
 
-        private readonly INetworkTCPClient _tcp;
+        private readonly ITCPClient _tcp;
 
         private IAesStream _aesStream;
         private byte[] _buffer;
 
-        public ProtobufStream(INetworkTCPClient tcp, bool isServer = false)
+        public ProtobufStream(ITCPClient tcp, bool isServer = false)
         {
             _tcp = tcp;
             IsServer = isServer;
@@ -234,11 +234,7 @@ namespace Aragas.Core.IO
 
         public byte ReadByte()
         {
-            var buffer = new byte[1];
-            
-            Receive(buffer, 0, buffer.Length);
-            
-            return buffer[0];
+            return Receive(1)[0];
         }
 
         public VarInt ReadVarInt()
@@ -262,10 +258,7 @@ namespace Aragas.Core.IO
 
         public byte[] ReadByteArray(int length)
         {
-            if (EncryptionEnabled)
-                return _aesStream.ReadByteArray(length);
-            else
-                return _tcp.ReadByteArray(length);
+            return Receive(length);
 
             /*
             if (length == 0)
@@ -288,19 +281,19 @@ namespace Aragas.Core.IO
         #endregion Read
 
 
-        private void Send(byte[] buffer, int offset, int count)
+        private void Send(byte[] buffer)
         {
             if (EncryptionEnabled)
-                _aesStream.Write(buffer, offset, count);
+                _aesStream.EncryptByteArray(buffer);
             else
-                _tcp.Send(buffer, offset, count);
+                _tcp.WriteByteArray(buffer);
         }
-        private int Receive(byte[] buffer, int offset, int count)
+        private byte[] Receive(int length)
         {
             if (EncryptionEnabled)
-                return _aesStream.Read(buffer, offset, count);
+                return _aesStream.DecryptByteArray(length);
             else
-                return _tcp.Receive(buffer, offset, count);
+                return _tcp.ReadByteArray(length);
         }
 
         public void SendPacket(ref ProtobufPacket packet)
@@ -320,7 +313,7 @@ namespace Aragas.Core.IO
             Array.Copy(lenBytes, 0, tempBuff, 0, lenBytes.Length);
             Array.Copy(_buffer, 0, tempBuff, lenBytes.Length, _buffer.Length);
 
-            Send(tempBuff, 0, tempBuff.Length);
+            Send(tempBuff);
 
             _buffer = null;
         }

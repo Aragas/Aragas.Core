@@ -25,9 +25,9 @@ namespace Aragas.Core.Wrappers
 
     public interface ILuaWrapper
     {
-        ILua Create();
-        ILua Create(string scriptName);
-        ILuaTable Create(ILua lua, string tableName);
+        ILua CreateLua();
+        ILua CreateLua(string scriptName);
+        ILuaTable CreateTable(ILua lua, string tableName);
     }
 
     public static class LuaWrapper
@@ -44,9 +44,9 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        public static ILua Create() { return Instance.Create(); }
-        public static ILua Create(string scriptName) { return Instance.Create(scriptName); }
+        public static ILua CreateLua() { return Instance.CreateLua(); }
+        public static ILua CreateLua(string scriptName) { return Instance.CreateLua(scriptName); }
 
-        public static ILuaTable Create(ILua lua, string tableName) { return Instance.Create(lua, tableName); }
+        public static ILuaTable CreateTable(ILua lua, string tableName) { return Instance.CreateTable(lua, tableName); }
     }
 }

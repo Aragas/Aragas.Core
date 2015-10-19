@@ -2,13 +2,21 @@
 
 namespace Aragas.Core.Wrappers
 {
+    public interface IThread
+    {
+        string Name { get; set; }
+        bool IsBackground { get; set; }
+
+        bool IsRunning { get; }
+
+        void Start();
+        void Abort();
+    }
+
     public delegate void WaitCallback(object state);
     public interface IThreadWrapper
     {
-        Int32 StartThread(Action action, Boolean isBackground, String threadName);
-        void AbortThread(Int32 id);
-
-        Boolean IsRunning(Int32 id);
+        IThread CreateThread(Action action);
 
         void Sleep(Int32 milliseconds);
 
@@ -32,10 +40,7 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        public static int StartThread(Action action, bool isBackground, string threadName) { return Instance.StartThread(action, isBackground, threadName); }
-        public static void AbortThread(int id) { Instance.AbortThread(id); }
-
-        public static bool IsRunning(int id) { return Instance.IsRunning(id); }
+        public static IThread CreateThread(Action action) {  return Instance.CreateThread(action); }
 
         public static void Sleep(int milliseconds) { Instance.Sleep(milliseconds); }
 
