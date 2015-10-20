@@ -10,7 +10,7 @@ namespace Aragas.Core.Wrappers
         void Start();
         void Stop();
 
-        ITCPClient AcceptNetworkTCPClient();
+        ITCPClient AcceptTCPClient();
     }
 
     public interface ITCPListenerWrapper
