@@ -55,6 +55,7 @@
     <Compile Include="Wrappers\TCPClientWrapper.cs" />
     <Compile Include="Wrappers\TCPListenerWrapper.cs" />
     <Compile Include="Wrappers\LuaWrapper.cs" />
+    <Compile Include="Wrappers\DatabaseWrapper.cs" />
     <Compile Include="Wrappers\ThreadWrapper.cs" />
   </ItemGroup>
   <Choose>
