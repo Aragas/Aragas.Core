@@ -45,7 +45,7 @@ namespace Aragas.Core.Wrappers
             GetCustomTableType(baseType).CustomTypes.Add(new CustomTypeInfo { CustomType = customType, Count = count });
         }
 
-        public int Id;
+		public int Id { get; set; }
     }
 
     public interface IDatabase
