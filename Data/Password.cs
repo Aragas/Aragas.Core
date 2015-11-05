@@ -65,8 +65,7 @@ namespace Aragas.Core.Data
             
             return this;
         }
-
-
+        
         public override string ToString()
         {
             return Hash;

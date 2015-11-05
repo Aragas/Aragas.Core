@@ -227,46 +227,67 @@ namespace Aragas.Core.Data
         {
             return (float) (val * Math.PI / 180.0f);
         }
-        
+
         #endregion
 
         #region Operators
+
+        public static Vector3 operator -(Vector3 a)
+        {
+            return new Vector3(-a.X, -a.Y, -a.Z);
+        }
+        public static Vector3 operator ++(Vector3 a)
+        {
+            return new Vector3(a.X, a.Y, a.Z) + 1.0;
+        }
+        public static Vector3 operator --(Vector3 a)
+        {
+            return new Vector3(a.X, a.Y, a.Z) - 1.0;
+        }
 
         public static bool operator !=(Vector3 a, Vector3 b)
         {
             return !a.Equals(b);
         }
-
         public static bool operator ==(Vector3 a, Vector3 b)
         {
             return a.Equals(b);
+        }
+
+        public static bool operator >(Vector3 a, Vector3 b)
+        {
+            return a.X > b.X && a.Y > b.Y && a.Z > b.Z;
+        }
+        public static bool operator <(Vector3 a, Vector3 b)
+        {
+            return a.X < b.X && a.Y < b.Y && a.Z < b.Z;
+        }
+
+        public static bool operator >=(Vector3 a, Vector3 b)
+        {
+            return a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z;
+        }
+        public static bool operator <=(Vector3 a, Vector3 b)
+        {
+            return a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
         }
 
         public static Vector3 operator +(Vector3 a, Vector3 b)
         {
             return new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         }
-
         public static Vector3 operator -(Vector3 a, Vector3 b)
         {
             return new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
-
-        public static Vector3 operator -(Vector3 a)
-        {
-            return new Vector3(-a.X, -a.Y, -a.Z);
-        }
-
         public static Vector3 operator *(Vector3 a, Vector3 b)
         {
             return new Vector3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
         }
-
         public static Vector3 operator /(Vector3 a, Vector3 b)
         {
             return new Vector3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
         }
-
         public static Vector3 operator %(Vector3 a, Vector3 b)
         {
             return new Vector3(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
@@ -276,22 +297,18 @@ namespace Aragas.Core.Data
         {
             return new Vector3(a.X + b, a.Y + b, a.Z + b);
         }
-
         public static Vector3 operator -(Vector3 a, double b)
         {
             return new Vector3(a.X - b, a.Y - b, a.Z - b);
         }
-
         public static Vector3 operator *(Vector3 a, double b)
         {
             return new Vector3(a.X * b, a.Y * b, a.Z * b);
         }
-
         public static Vector3 operator /(Vector3 a, double b)
         {
             return new Vector3(a.X / b, a.Y / b, a.Z / b);
         }
-
         public static Vector3 operator %(Vector3 a, double b)
         {
             return new Vector3(a.X % b, a.Y % b, a.Y % b);
@@ -301,22 +318,18 @@ namespace Aragas.Core.Data
         {
             return new Vector3(a + b.X, a + b.Y, a + b.Z);
         }
-
         public static Vector3 operator -(double a, Vector3 b)
         {
             return new Vector3(a - b.X, a - b.Y, a - b.Z);
         }
-
         public static Vector3 operator *(double a, Vector3 b)
         {
             return new Vector3(a * b.X, a * b.Y, a * b.Z);
         }
-
         public static Vector3 operator /(double a, Vector3 b)
         {
             return new Vector3(a / b.X, a / b.Y, a / b.Z);
         }
-
         public static Vector3 operator %(double a, Vector3 b)
         {
             return new Vector3(a % b.X, a % b.Y, a % b.Y);

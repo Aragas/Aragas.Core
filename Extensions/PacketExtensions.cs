@@ -37,6 +37,5 @@ namespace Aragas.Core.Extensions
         {
             return new Vector3(reader.Read<float>(), reader.Read<float>(), reader.Read<float>());
         }
-
     }
 }

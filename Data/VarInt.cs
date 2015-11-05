@@ -12,19 +12,9 @@ namespace Aragas.Core.Data
             _value = value;
         }
 
-        public static implicit operator VarInt(int value)
-        {
-            return new VarInt(value);
-        }
-
         public string ToString(IFormatProvider cultureInfo)
         {
             return _value.ToString(cultureInfo);
-        }
-
-        public static implicit operator int (VarInt value)
-        {
-            return value._value;
         }
 
         public override string ToString()
@@ -51,9 +41,20 @@ namespace Aragas.Core.Data
             return bytes.ToArray();
         }
 
-        public static VarInt Parse(string s, IFormatProvider provider)
+
+        public static implicit operator VarInt(int value)
         {
-            return int.Parse(s, provider);
+            return new VarInt(value);
+        }
+
+        public static implicit operator int(VarInt value)
+        {
+            return value._value;
+        }
+
+        public static VarInt Parse(string @string, IFormatProvider provider)
+        {
+            return int.Parse(@string, provider);
         }
     }
 }
