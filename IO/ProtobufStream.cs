@@ -9,7 +9,7 @@ using Aragas.Core.Wrappers;
 
 namespace Aragas.Core.IO
 {
-    public sealed class ProtobufStream : IPacketStream
+    public class ProtobufStream : IPacketStream
     {
         public bool IsServer { get; }
 
@@ -25,7 +25,7 @@ namespace Aragas.Core.IO
         private readonly ITCPClient _tcp;
 
         private IAesStream _aesStream;
-        private byte[] _buffer;
+        protected byte[] _buffer;
 
         public ProtobufStream(ITCPClient tcp, bool isServer = false)
         {
@@ -280,8 +280,7 @@ namespace Aragas.Core.IO
 
         #endregion Read
 
-
-        private void Send(byte[] buffer)
+        protected void Send(byte[] buffer)
         {
             if (EncryptionEnabled)
                 _aesStream.EncryptByteArray(buffer);
@@ -305,7 +304,7 @@ namespace Aragas.Core.IO
         }
 
 
-        private void Purge()
+        protected virtual void Purge()
         {
             var lenBytes = new VarInt(_buffer.Length).InByteArray();
             var tempBuff = new byte[_buffer.Length + lenBytes.Length];

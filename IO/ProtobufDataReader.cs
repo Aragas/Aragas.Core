@@ -8,7 +8,7 @@ using Aragas.Core.Interfaces;
 
 namespace Aragas.Core.IO
 {
-    public sealed class ProtobufDataReader : IPacketDataReader
+    public class ProtobufDataReader : IPacketDataReader
     {
         public bool IsServer { get; }
 
