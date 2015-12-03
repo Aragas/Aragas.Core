@@ -8,9 +8,9 @@ using Aragas.Core.Interfaces;
 
 namespace Aragas.Core.IO
 {
-    public class ProtobufDataReader : IPacketDataReader
+    public class ProtobufDataReader : PacketDataReader
     {
-        public bool IsServer { get; }
+        public override bool IsServer { get; }
 
         private Encoding Encoding { get; } = Encoding.UTF8;
 
@@ -21,7 +21,6 @@ namespace Aragas.Core.IO
             _stream = stream;
             IsServer = isServer;
         }
-
         public ProtobufDataReader(byte[] data, bool isServer = false)
         {
             _stream = new MemoryStream(data);
@@ -29,8 +28,10 @@ namespace Aragas.Core.IO
         }
 
 
+        #region Read
+
         // -- Anything
-        public T Read<T>(T value = default(T), int length = 0)
+        public override T Read<T>(T value = default(T), int length = 0)
         {
             var type = typeof(T);
 
@@ -47,6 +48,12 @@ namespace Aragas.Core.IO
                     return (T) Convert.ChangeType(ReadIntArray(length), typeof(T));
                 if (type == typeof(byte[]))
                     return (T) Convert.ChangeType(ReadByteArray(length), typeof(T));
+
+
+                foreach (var ext in ReadExtendedList)
+                    if (type == ext.Type)
+                        return (T) ext.Function(this, length);
+
 
                 return value;
             }
@@ -97,6 +104,10 @@ namespace Aragas.Core.IO
             if (type == typeof(byte[]))
                 return (T) Convert.ChangeType(ReadByteArray(), typeof(T));
 
+            foreach (var ext in ReadExtendedList)
+                if (type == ext.Type)
+                    return (T) ext.Function(this, length);
+            
 
             return value;
         }
@@ -289,14 +300,16 @@ namespace Aragas.Core.IO
             return msg;
         }
 
+        #endregion Read
 
-        public int BytesLeft()
+
+        public override int BytesLeft()
         {
             return (int)(_stream.Length - _stream.Position);
         }
 
 
-        public void Dispose()
+        public override void Dispose()
         {
             _stream?.Dispose();
         }

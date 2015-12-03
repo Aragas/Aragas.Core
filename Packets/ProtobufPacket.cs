@@ -7,12 +7,10 @@ namespace Aragas.Core.Packets
     {
         public abstract VarInt ID { get; }
 
-        public VarInt Origin { get; set; } = new VarInt(0);
-
         /// <summary>
         /// Read packet from IPacketDataReader.
         /// </summary>
-        public abstract ProtobufPacket ReadPacket(IPacketDataReader reader);
+        public abstract ProtobufPacket ReadPacket(PacketDataReader reader);
 
         /// <summary>
         /// Write packet to IPacketStream.

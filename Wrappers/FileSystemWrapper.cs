@@ -16,6 +16,8 @@ namespace Aragas.Core.Wrappers
         IFolder LuaFolder { get; }
         IFolder AssemblyFolder { get; }
         IFolder DatabaseFolder { get; }
+        IFolder ContentFolder { get; }
+        IFolder OutputFolder { get; }
     }
 
     public static class FileSystemWrapper
@@ -39,6 +41,8 @@ namespace Aragas.Core.Wrappers
         public static IFolder LuaFolder => Instance.LuaFolder;
         public static IFolder AssemblyFolder => Instance.AssemblyFolder;
         public static IFolder DatabaseFolder => Instance.DatabaseFolder;
+        public static IFolder ContentFolder => Instance.ContentFolder;
+        public static IFolder OutputFolder => Instance.ContentFolder;
 
         static readonly JsonConverter[] Converters = {
         };
@@ -54,9 +58,16 @@ namespace Aragas.Core.Wrappers
                 {
                     try
                     {
-                        JsonConvert.PopulateObject(file, value, new JsonSerializerSettings { Converters = Converters });
-                        stream.SetLength(0);
-                        writer.Write(JsonConvert.SerializeObject(value, Formatting.Indented, Converters));
+                        if (value == null)
+                        {
+                            value = (T) JsonConvert.DeserializeObject(file, new JsonSerializerSettings {Converters = Converters});
+                        }
+                        else
+                        {
+                            JsonConvert.PopulateObject(file, value, new JsonSerializerSettings {Converters = Converters});
+                            stream.SetLength(0);
+                            writer.Write(JsonConvert.SerializeObject(value, Formatting.Indented, Converters));
+                        }
                     }
                     catch (JsonReaderException e)
                     {

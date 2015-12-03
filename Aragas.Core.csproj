@@ -41,7 +41,7 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\PacketExtensions.cs" />
     <Compile Include="Interfaces\IAesStream.cs" />
-    <Compile Include="Interfaces\IPacketDataReader.cs" />
+    <Compile Include="Interfaces\PacketDataReader.cs" />
     <Compile Include="Interfaces\IPacketStream.cs" />
     <Compile Include="Interfaces\IUpdatable.cs" />
     <Compile Include="IO\BouncyCastleAES.cs" />

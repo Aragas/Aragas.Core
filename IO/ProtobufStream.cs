@@ -54,6 +54,7 @@ namespace Aragas.Core.IO
 
         #region Write
 
+
         // -- String
         public void Write(string value, int length = 0)
         {
@@ -298,7 +299,6 @@ namespace Aragas.Core.IO
         public void SendPacket(ref ProtobufPacket packet)
         {
             Write(packet.ID);
-            Write(packet.Origin);
             packet.WritePacket(this);
             Purge();
         }
