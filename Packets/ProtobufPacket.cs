@@ -1,5 +1,5 @@
 ﻿using Aragas.Core.Data;
-using Aragas.Core.Interfaces;
+using Aragas.Core.IO;
 
 namespace Aragas.Core.Packets
 {
@@ -15,6 +15,6 @@ namespace Aragas.Core.Packets
         /// <summary>
         /// Write packet to IPacketStream.
         /// </summary>
-        public abstract ProtobufPacket WritePacket(IPacketStream writer);
+        public abstract ProtobufPacket WritePacket(PacketStream writer);
     }
 }

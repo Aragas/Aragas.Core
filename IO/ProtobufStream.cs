@@ -9,15 +9,17 @@ using Aragas.Core.Wrappers;
 
 namespace Aragas.Core.IO
 {
-    public class ProtobufStream : IPacketStream
+    public class ProtobufStream : PacketStream
     {
-        public bool IsServer { get; }
+        public override bool IsServer { get; }
 
-        public bool Connected => _tcp != null && _tcp.Connected;
-        public int DataAvailable => _tcp?.DataAvailable ?? 0;
+        public override string Host => _tcp.IP;
+        public override ushort Port => _tcp.Port;
+        public override bool Connected => _tcp != null && _tcp.Connected;
+        public override int DataAvailable => _tcp?.DataAvailable ?? 0;
 
 
-        public bool EncryptionEnabled { get; private set; }
+        public override bool EncryptionEnabled { get; protected set; }
 
         private Encoding Encoding { get; } = Encoding.UTF8;
 
@@ -34,17 +36,17 @@ namespace Aragas.Core.IO
         }
 
 
-        public void Connect(string ip, ushort port)
+        public override void Connect(string ip, ushort port)
         {
             _tcp.Connect(ip, port);
         }
-        public void Disconnect()
+        public override void Disconnect()
         {
             _tcp.Disconnect();
         }
 
 
-        public void InitializeEncryption(byte[] key)
+        public override void InitializeEncryption(byte[] key)
         {
             _aesStream = new BouncyCastleAES(_tcp, key);
 
@@ -56,7 +58,7 @@ namespace Aragas.Core.IO
 
 
         // -- String
-        public void Write(string value, int length = 0)
+        public override void Write(string value, int length = 0)
         {
             byte[] lengthBytes;
             byte[] final;
@@ -81,36 +83,36 @@ namespace Aragas.Core.IO
         }
 
         // -- VarInt
-        public void Write(VarInt value)
+        public override void Write(VarInt value)
         {
             ToBuffer(value.InByteArray());
         }
 
         // -- Boolean
-        public void Write(bool value)
+        public override void Write(bool value)
         {
             Write(Convert.ToByte(value));
         }
 
         // -- SByte & Byte
-        public void Write(sbyte value)
+        public override void Write(sbyte value)
         {
             Write(unchecked((byte) value));
         }
-        public void Write(byte value)
+        public override void Write(byte value)
         {
             ToBuffer(new[] { value });
         }
 
         // -- Short & UShort
-        public void Write(short value)
+        public override void Write(short value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
             ToBuffer(bytes);
         }
-        public void Write(ushort value)
+        public override void Write(ushort value)
         {
             ToBuffer(new[]
             {
@@ -120,14 +122,14 @@ namespace Aragas.Core.IO
         }
 
         // -- Int & UInt
-        public void Write(int value)
+        public override void Write(int value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
             ToBuffer(bytes);
         }
-        public void Write(uint value)
+        public override void Write(uint value)
         {
             ToBuffer(new[]
             {
@@ -139,14 +141,14 @@ namespace Aragas.Core.IO
         }
 
         // -- Long & ULong
-        public void Write(long value)
+        public override void Write(long value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
             ToBuffer(bytes);
         }
-        public void Write(ulong value)
+        public override void Write(ulong value)
         {
             ToBuffer(new[]
             {
@@ -162,7 +164,7 @@ namespace Aragas.Core.IO
         }
 
         // -- Float
-        public void Write(float value)
+        public override void Write(float value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
@@ -171,7 +173,7 @@ namespace Aragas.Core.IO
         }
 
         // -- Double
-        public void Write(double value)
+        public override void Write(double value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
@@ -180,7 +182,7 @@ namespace Aragas.Core.IO
         }
 
         // -- StringArray
-        public void Write(string[] value)
+        public override void Write(string[] value)
         {
             var length = value.Length;
             Write(new VarInt(length));
@@ -190,7 +192,7 @@ namespace Aragas.Core.IO
         }
 
         // -- VarIntArray
-        public void Write(VarInt[] value)
+        public override void Write(VarInt[] value)
         {
             var length = value.Length;
             Write(new VarInt(length));
@@ -200,7 +202,7 @@ namespace Aragas.Core.IO
         }
 
         // -- IntArray
-        public void Write(int[] value)
+        public override void Write(int[] value)
         {
             var length = value.Length;
             Write(new VarInt(length));
@@ -220,7 +222,7 @@ namespace Aragas.Core.IO
             else
                 _buffer = value;
         }
-        public void Write(byte[] value)
+        public override void Write(byte[] value)
         {
             var length = value.Length;
             Write(new VarInt(length));
@@ -233,12 +235,12 @@ namespace Aragas.Core.IO
 
         #region Read
 
-        public byte ReadByte()
+        public override byte ReadByte()
         {
             return Receive(1)[0];
         }
 
-        public VarInt ReadVarInt()
+        public override VarInt ReadVarInt()
         {
             uint result = 0;
             int length = 0;
@@ -257,26 +259,9 @@ namespace Aragas.Core.IO
             return (int) result;
         }
 
-        public byte[] ReadByteArray(int length)
+        public override byte[] ReadByteArray(int length)
         {
             return Receive(length);
-
-            /*
-            if (length == 0)
-                return new byte[length];
-
-            var msg = new byte[length];
-            var readSoFar = 0;
-            while (readSoFar < length)
-            {
-                var read = Receive(msg, readSoFar, msg.Length - readSoFar);
-                readSoFar += read;
-                if (read == 0)
-                    break;   // connection was broken
-            }
-
-            return msg;
-            */
         }
 
         #endregion Read
@@ -296,7 +281,7 @@ namespace Aragas.Core.IO
                 return _tcp.ReadByteArray(length);
         }
 
-        public void SendPacket(ref ProtobufPacket packet)
+        public override void SendPacket(ref ProtobufPacket packet)
         {
             Write(packet.ID);
             packet.WritePacket(this);
@@ -318,7 +303,7 @@ namespace Aragas.Core.IO
         }
 
 
-        public void Dispose()
+        public override void Dispose()
         {
             _tcp?.Disconnect().Dispose();
 

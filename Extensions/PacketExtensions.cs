@@ -1,9 +1,9 @@
 ﻿using System;
 
 using Aragas.Core.Data;
-using Aragas.Core.Interfaces;
+using Aragas.Core.IO;
 
-using static Aragas.Core.Interfaces.PacketDataReader;
+using static Aragas.Core.IO.PacketDataReader;
 
 namespace Aragas.Core.Extensions
 {
@@ -11,12 +11,12 @@ namespace Aragas.Core.Extensions
     {
         public static void Init()
         {
-            ExtendRead(new ExtendReadInfo(typeof(TimeSpan), ReadTimeSpan));
-            ExtendRead(new ExtendReadInfo(typeof(DateTime), ReadDateTime));
-            ExtendRead(new ExtendReadInfo(typeof(Vector3), ReadVector3));
+            ExtendRead<TimeSpan>(ReadTimeSpan);
+            ExtendRead<DateTime>(ReadDateTime);
+            ExtendRead<Vector3>(ReadVector3);
         }
 
-        public static void Write(this IPacketStream stream, TimeSpan value)
+        public static void Write(this PacketStream stream, TimeSpan value)
         {
             stream.Write(value.Ticks);
         }
@@ -25,7 +25,7 @@ namespace Aragas.Core.Extensions
             return new TimeSpan(reader.Read<long>());
         }
 
-        public static void Write(this IPacketStream stream, DateTime value)
+        public static void Write(this PacketStream stream, DateTime value)
         {
             stream.Write(value.Ticks);
         }
@@ -34,7 +34,7 @@ namespace Aragas.Core.Extensions
             return new DateTime(reader.Read<long>());
         }
         
-        public static void Write(this IPacketStream stream, Vector3 value)
+        public static void Write(this PacketStream stream, Vector3 value)
         {
             stream.Write(value.X);
             stream.Write(value.Y);

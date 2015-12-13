@@ -6,6 +6,7 @@ namespace Aragas.Core.Wrappers
     public interface ITCPClient : IDisposable
     {
         string IP { get; }
+        ushort Port { get; }
         bool Connected { get; }
         int DataAvailable { get; }
 

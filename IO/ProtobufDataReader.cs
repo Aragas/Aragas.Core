@@ -4,7 +4,6 @@ using System.Text;
 
 using Aragas.Core.Data;
 using Aragas.Core.Exceptions;
-using Aragas.Core.Interfaces;
 
 namespace Aragas.Core.IO
 {
@@ -37,76 +36,76 @@ namespace Aragas.Core.IO
 
             if (length > 0)
             {
-                if (type == typeof(string))
-                    return (T) Convert.ChangeType(ReadString(length), typeof(T));
+                if (type == typeof (string))
+                    return (T) (object) ReadString(length);
 
-                if (type == typeof(string[]))
-                    return (T) Convert.ChangeType(ReadStringArray(length), typeof(T));
-                if (type == typeof(VarInt[]))
-                    return (T) Convert.ChangeType(ReadVarIntArray(length), typeof(T));
-                if (type == typeof(int[]))
-                    return (T) Convert.ChangeType(ReadIntArray(length), typeof(T));
-                if (type == typeof(byte[]))
-                    return (T) Convert.ChangeType(ReadByteArray(length), typeof(T));
+                if (type == typeof (string[]))
+                    return (T) (object) ReadStringArray(length);
+                if (type == typeof (VarInt[]))
+                    return (T) (object) ReadVarIntArray(length);
+                if (type == typeof (int[]))
+                    return (T) (object) ReadIntArray(length);
+                if (type == typeof (byte[]))
+                    return (T) (object) ReadByteArray(length);
 
 
-                foreach (var ext in ReadExtendedList)
-                    if (type == ext.Type)
-                        return (T) ext.Function(this, length);
+                if(ExtendReadContains(type))
+                    return ExtendReadExecute<T>(this, length);
 
 
                 return value;
             }
 
 
-            if (type == typeof(string))
-                return (T) Convert.ChangeType(ReadString(), typeof(T));
+            if (type == typeof (string))
+                return (T) (object) ReadString();
 
-            if (type == typeof(VarInt))
-                return (T) Convert.ChangeType(ReadVarInt(), typeof(T));
+            if (type == typeof (VarInt))
+                return (T) (object) ReadVarInt();
 
 
-            if (type == typeof(bool))
-                return (T) Convert.ChangeType(ReadBoolean(), typeof(T));
+            if (type == typeof (bool))
+                return (T) (object) ReadBoolean();
 
-            if (type == typeof(sbyte))
-                return (T) Convert.ChangeType(ReadSByte(), typeof(T));
-            if (type == typeof(byte))
-                return (T) Convert.ChangeType(ReadByte(), typeof(T));
+            if (type == typeof (sbyte))
+                return (T) (object) ReadSByte();
+            if (type == typeof (byte))
+                return (T) (object) ReadByte();
 
-            if (type == typeof(short))
-                return (T) Convert.ChangeType(ReadShort(), typeof(T));
-            if (type == typeof(ushort))
-                return (T) Convert.ChangeType(ReadUShort(), typeof(T));
+            if (type == typeof (short))
+                return (T) (object) ReadShort();
+            if (type == typeof (ushort))
+                return (T) (object) ReadUShort();
 
-            if (type == typeof(int))
-                return (T) Convert.ChangeType(ReadInt(), typeof(T));
-            if (type == typeof(uint))
-                return (T) Convert.ChangeType(ReadUInt(), typeof(T));
+            if (type == typeof (int))
+                return (T) (object) ReadInt();
+            if (type == typeof (uint))
+                return (T) (object) ReadUInt();
 
-            if (type == typeof(long))
-                return (T) Convert.ChangeType(ReadLong(), typeof(T));
-            if (type == typeof(ulong))
-                return (T) Convert.ChangeType(ReadULong(), typeof(T));
+            if (type == typeof (long))
+                return (T) (object) ReadLong();
+            if (type == typeof (ulong))
+                return (T) (object) ReadULong();
 
-            if (type == typeof(float))
-                return (T) Convert.ChangeType(ReadFloat(), typeof(T));
+            if (type == typeof (float))
+                return (T) (object) ReadFloat();
 
-            if (type == typeof(double))
-                return (T) Convert.ChangeType(ReadDouble(), typeof(T));
+            if (type == typeof (double))
+                return (T) (object) ReadDouble();
 
-            if (type == typeof(string[]))
-                return (T) Convert.ChangeType(ReadStringArray(), typeof(T));
-            if (type == typeof(VarInt[]))
-                return (T) Convert.ChangeType(ReadVarIntArray(), typeof(T));
-            if (type == typeof(int[]))
-                return (T) Convert.ChangeType(ReadIntArray(), typeof(T));
-            if (type == typeof(byte[]))
-                return (T) Convert.ChangeType(ReadByteArray(), typeof(T));
 
-            foreach (var ext in ReadExtendedList)
-                if (type == ext.Type)
-                    return (T) ext.Function(this, length);
+            if (ExtendReadContains(type))
+                return ExtendReadExecute<T>(this);
+
+
+            if (type == typeof (string[]))
+                return (T) (object) ReadStringArray();
+            if (type == typeof (VarInt[]))
+                return (T) (object) ReadVarIntArray();
+            if (type == typeof (int[]))
+                return (T) (object) ReadIntArray();
+            if (type == typeof (byte[]))
+                return (T) (object) ReadByteArray();
             
 
             return value;
@@ -116,9 +115,9 @@ namespace Aragas.Core.IO
         private string ReadString(int length = 0)
         {
             if (length == 0)
-                length = Read<VarInt>();
+                length = ReadVarInt();
 
-            var stringBytes = Read<byte[]>(null, length);
+            var stringBytes = ReadByteArray(length);
 
             return Encoding.GetString(stringBytes, 0, stringBytes.Length);
         }
@@ -131,7 +130,7 @@ namespace Aragas.Core.IO
 
             while (true)
             {
-                var current = Read<byte>();
+                var current = ReadByte();
                 result |= (current & 0x7Fu) << length++ * 7;
 
                 if (length > 5)
@@ -146,13 +145,13 @@ namespace Aragas.Core.IO
         // -- Boolean
         private bool ReadBoolean()
         {
-            return Convert.ToBoolean(Read<byte>());
+            return Convert.ToBoolean(ReadByte());
         }
 
         // -- SByte & Byte
         private sbyte ReadSByte()
         {
-            return unchecked((sbyte) Read<byte>());
+            return unchecked((sbyte) ReadByte());
         }
         private byte ReadByte()
         {
@@ -162,20 +161,20 @@ namespace Aragas.Core.IO
         // -- Short & UShort
         private short ReadShort()
         {
-            var bytes = Read<byte[]>(null, 2);
+            var bytes = ReadByteArray(2);
             Array.Reverse(bytes);
 
             return BitConverter.ToInt16(bytes, 0);
         }
         private ushort ReadUShort()
         {
-            return (ushort) ((Read<byte>() << 8) | Read<byte>());
+            return (ushort) ((ReadByte() << 8) | ReadByte());
         }
 
         // -- Int & UInt
         private int ReadInt()
         {
-            var bytes = Read<byte[]>(null, 4);
+            var bytes = ReadByteArray(4);
             Array.Reverse(bytes);
 
             return BitConverter.ToInt32(bytes, 0);
@@ -183,16 +182,16 @@ namespace Aragas.Core.IO
         private uint ReadUInt()
         {
             return (uint) (
-                (Read<byte>() << 24) |
-                (Read<byte>() << 16) |
-                (Read<byte>() << 8) |
-                (Read<byte>()));
+                (ReadByte() << 24) |
+                (ReadByte() << 16) |
+                (ReadByte() << 8) |
+                (ReadByte()));
         }
 
         // -- Long & ULong
         private long ReadLong()
         {
-            var bytes = Read<byte[]>(null, 8);
+            var bytes = ReadByteArray(8);
             Array.Reverse(bytes);
 
             return BitConverter.ToInt64(bytes, 0);
@@ -200,20 +199,20 @@ namespace Aragas.Core.IO
         private ulong ReadULong()
         {
             return unchecked(
-                   ((ulong) Read<byte>() << 56) |
-                   ((ulong) Read<byte>() << 48) |
-                   ((ulong) Read<byte>() << 40) |
-                   ((ulong) Read<byte>() << 32) |
-                   ((ulong) Read<byte>() << 24) |
-                   ((ulong) Read<byte>() << 16) |
-                   ((ulong) Read<byte>() << 8) |
-                    (ulong) Read<byte>());
+                   ((ulong) ReadByte() << 56) |
+                   ((ulong) ReadByte() << 48) |
+                   ((ulong) ReadByte() << 40) |
+                   ((ulong) ReadByte() << 32) |
+                   ((ulong) ReadByte() << 24) |
+                   ((ulong) ReadByte() << 16) |
+                   ((ulong) ReadByte() << 8) |
+                    (ulong) ReadByte());
         }
 
         // -- Floats
         private float ReadFloat()
         {
-            var bytes = Read<byte[]>(null, 4);
+            var bytes = ReadByteArray(4);
             Array.Reverse(bytes);
 
             return BitConverter.ToSingle(bytes, 0);
@@ -222,7 +221,7 @@ namespace Aragas.Core.IO
         // -- Doubles
         private double ReadDouble()
         {
-            var bytes = Read<byte[]>(null, 8);
+            var bytes = ReadByteArray(8);
             Array.Reverse(bytes);
 
             return BitConverter.ToDouble(bytes, 0);
@@ -231,15 +230,15 @@ namespace Aragas.Core.IO
         // -- StringArray
         private string[] ReadStringArray()
         {
-            var length = Read<VarInt>();
-            return Read<string[]>(null, length);
+            var length = ReadVarInt();
+            return ReadStringArray( length);
         }
         private string[] ReadStringArray(int length)
         {
             var myStrings = new string[length];
 
             for (var i = 0; i < length; i++)
-                myStrings[i] = Read<string>();
+                myStrings[i] = ReadString();
 
             return myStrings;
         }
@@ -247,15 +246,15 @@ namespace Aragas.Core.IO
         // -- VarIntArray
         private VarInt[] ReadVarIntArray()
         {
-            var length = Read<VarInt>();
-            return Read<VarInt[]>(null, length);
+            var length = ReadVarInt();
+            return ReadVarIntArray(length);
         }
         private VarInt[] ReadVarIntArray(int length)
         {
             var myInts = new VarInt[length];
 
             for (var i = 0; i < length; i++)
-                myInts[i] = Read<VarInt>();
+                myInts[i] = ReadVarInt();
 
             return myInts;
         }
@@ -263,8 +262,8 @@ namespace Aragas.Core.IO
         // -- IntArray
         private int[] ReadIntArray()
         {
-            var length = Read<VarInt>();
-            return Read<int[]>(null, length);
+            var length = ReadVarInt();
+            return ReadIntArray(length);
         }
         private int[] ReadIntArray(int length)
         {
@@ -279,8 +278,8 @@ namespace Aragas.Core.IO
         // -- ByteArray
         private byte[] ReadByteArray()
         {
-            var length = Read<VarInt>();
-            return Read<byte[]>(null, length);
+            var length = ReadVarInt();
+            return ReadByteArray(length);
         }
         private byte[] ReadByteArray(int length)
         {
