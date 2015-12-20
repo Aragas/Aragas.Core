@@ -13,10 +13,10 @@ namespace Aragas.Core.IO
     {
         public override bool IsServer { get; }
 
-        public override string Host => _tcp.IP;
-        public override ushort Port => _tcp.Port;
-        public override bool Connected => _tcp != null && _tcp.Connected;
-        public override int DataAvailable => _tcp?.DataAvailable ?? 0;
+        public override string Host => TCP.IP;
+        public override ushort Port => TCP.Port;
+        public override bool Connected => TCP != null && TCP.Connected;
+        public override int DataAvailable => TCP?.DataAvailable ?? 0;
 
 
         public override bool EncryptionEnabled { get; protected set; }
@@ -24,31 +24,31 @@ namespace Aragas.Core.IO
         private Encoding Encoding { get; } = Encoding.UTF8;
 
 
-        private readonly ITCPClient _tcp;
+        protected ITCPClient TCP { get; }
 
         private IAesStream _aesStream;
         protected byte[] _buffer;
 
         public ProtobufStream(ITCPClient tcp, bool isServer = false)
         {
-            _tcp = tcp;
+            TCP = tcp;
             IsServer = isServer;
         }
 
 
         public override void Connect(string ip, ushort port)
         {
-            _tcp.Connect(ip, port);
+            TCP.Connect(ip, port);
         }
         public override void Disconnect()
         {
-            _tcp.Disconnect();
+            TCP.Disconnect();
         }
 
 
         public override void InitializeEncryption(byte[] key)
         {
-            _aesStream = new BouncyCastleAES(_tcp, key);
+            _aesStream = new BouncyCastleAES(TCP, key);
 
             EncryptionEnabled = true;
         }
@@ -271,14 +271,14 @@ namespace Aragas.Core.IO
             if (EncryptionEnabled)
                 _aesStream.EncryptByteArray(buffer);
             else
-                _tcp.WriteByteArray(buffer);
+                TCP.WriteByteArray(buffer);
         }
         private byte[] Receive(int length)
         {
             if (EncryptionEnabled)
                 return _aesStream.DecryptByteArray(length);
             else
-                return _tcp.ReadByteArray(length);
+                return TCP.ReadByteArray(length);
         }
 
         public override void SendPacket(ref ProtobufPacket packet)
@@ -305,7 +305,7 @@ namespace Aragas.Core.IO
 
         public override void Dispose()
         {
-            _tcp?.Disconnect().Dispose();
+            TCP?.Disconnect().Dispose();
 
             _aesStream?.Dispose();
 
