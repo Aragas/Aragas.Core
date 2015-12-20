@@ -2,6 +2,8 @@
 
 namespace Aragas.Core.Wrappers
 {
+    public delegate void ThreadStart();
+    public delegate void ParameterizedThreadStart(object obj);
     public interface IThread
     {
         string Name { get; set; }
@@ -10,13 +12,17 @@ namespace Aragas.Core.Wrappers
         bool IsRunning { get; }
 
         void Start();
+        void Start(object obj);
+
         void Abort();
     }
 
     public delegate void WaitCallback(object state);
     public interface IThreadWrapper
     {
-        IThread CreateThread(Action action);
+        //IThread CreateThread(Action action);
+        IThread CreateThread(ThreadStart action);
+        IThread CreateThread(ParameterizedThreadStart action);
 
         void Sleep(Int32 milliseconds);
 
@@ -40,7 +46,9 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        public static IThread CreateThread(Action action) {  return Instance.CreateThread(action); }
+        //public static IThread CreateThread(Action action) {  return Instance.CreateThread(action); }
+        public static IThread CreateThread(ThreadStart action) { return Instance.CreateThread(action); }
+        public static IThread CreateThread(ParameterizedThreadStart action) { return Instance.CreateThread(action); }
 
         public static void Sleep(int milliseconds) { Instance.Sleep(milliseconds); }
 
