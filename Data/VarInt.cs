@@ -7,20 +7,11 @@ namespace Aragas.Core.Data
     {
         private readonly int _value;
 
-        public VarInt(int value)
-        {
-            _value = value;
-        }
+        public VarInt(int value) { _value = value; }
 
-        public string ToString(IFormatProvider cultureInfo)
-        {
-            return _value.ToString(cultureInfo);
-        }
+        public string ToString(IFormatProvider cultureInfo) => _value.ToString(cultureInfo);
 
-        public override string ToString()
-        {
-            return _value.ToString();
-        }
+        public override string ToString() => _value.ToString();
 
         public byte[] InByteArray()
         {
@@ -42,19 +33,10 @@ namespace Aragas.Core.Data
         }
 
 
-        public static implicit operator VarInt(int value)
-        {
-            return new VarInt(value);
-        }
+        public static implicit operator VarInt(int value) => new VarInt(value);
 
-        public static implicit operator int(VarInt value)
-        {
-            return value._value;
-        }
+        public static implicit operator int(VarInt value) => value._value;
 
-        public static VarInt Parse(string @string, IFormatProvider provider)
-        {
-            return int.Parse(@string, provider);
-        }
+        public static VarInt Parse(string @string, IFormatProvider provider) => int.Parse(@string, provider);
     }
 }

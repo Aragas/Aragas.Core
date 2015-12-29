@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Data\Password.cs" />
     <Compile Include="Data\VarInt.cs" />
+    <Compile Include="Data\Vecto2.cs" />
     <Compile Include="Data\Vector3.cs" />
     <Compile Include="Exceptions\ProtobufReadingException.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />

@@ -66,10 +66,7 @@ namespace Aragas.Core.Data
             return this;
         }
         
-        public override string ToString()
-        {
-            return Hash;
-        }
+        public override string ToString() => Hash;
     }
 
     public class PasswordHandler : JsonConverter
@@ -77,10 +74,7 @@ namespace Aragas.Core.Data
         public override bool CanRead => true;
         public override bool CanWrite => true;
 
-        public override bool CanConvert(Type objectType)
-        {
-            return false;
-        }
+        public override bool CanConvert(Type objectType) => false;
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {

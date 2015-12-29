@@ -302,10 +302,7 @@ namespace Aragas.Core.IO
         #endregion Read
 
 
-        public override int BytesLeft()
-        {
-            return (int)(_stream.Length - _stream.Position);
-        }
+        public override int BytesLeft() => (int)(_stream.Length - _stream.Position);
 
 
         public override void Dispose()

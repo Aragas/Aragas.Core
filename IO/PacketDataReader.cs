@@ -12,29 +12,21 @@ namespace Aragas.Core.IO
 
         #region ExtendRead
 
-        private static Dictionary<Int32, ExtendReadFunc> ReadExtendedList = new Dictionary<Int32, ExtendReadFunc>();
+        private static readonly Dictionary<Int32, ExtendReadFunc> ReadExtendedList = new Dictionary<Int32, ExtendReadFunc>();
 
         public static void ExtendRead<T>(ExtendReadFunc func)
         {
             ReadExtendedList.Add(typeof(T).GetHashCode(), func);
         }
 
-        protected static bool ExtendReadContains<T>()
-        {
-            return ExtendReadContains(typeof(T));
-        }
-        protected static bool ExtendReadContains(Type type)
-        {
-            return ReadExtendedList.ContainsKey(type.GetHashCode());
-        }
+        protected static bool ExtendReadContains<T>() => ExtendReadContains(typeof(T));
+
+        protected static bool ExtendReadContains(Type type) => ReadExtendedList.ContainsKey(type.GetHashCode());
 
         /// <summary>
         /// Use <see cref="ExtendReadContains"/> before calling this.
         /// </summary>
-        protected static T ExtendReadExecute<T>(PacketDataReader reader, Int32 length = 0)
-        {
-            return (T) ReadExtendedList[typeof(T).GetHashCode()](reader, length);
-        }
+        protected static T ExtendReadExecute<T>(PacketDataReader reader, Int32 length = 0) => (T) ReadExtendedList[typeof(T).GetHashCode()](reader, length);
 
         #endregion ExtendRead
 

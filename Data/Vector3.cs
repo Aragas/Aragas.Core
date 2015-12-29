@@ -13,10 +13,7 @@ namespace Aragas.Core.Data
         public readonly float Y;
         public readonly float Z;
 
-        public Vector3(float value)
-        {
-            X = Y = Z = value;
-        }
+        public Vector3(float value) { X = Y = Z = value; }
 
         public Vector3(float yaw, float pitch)
         {
@@ -37,138 +34,51 @@ namespace Aragas.Core.Data
             //Z = (float) (Math.Cos(pitch) * Math.Cos(yaw));
         }
 
-        public Vector3(float x, float y, float z)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-        }
+        public Vector3(float x, float y, float z) { X = x; Y = y; Z = z; }
 
-        public Vector3(double x, double y, double z)
-        {
-            X = (float) x;
-            Y = (float) y;
-            Z = (float) z;
-        }
+        public Vector3(double x, double y, double z) { X = (float) x; Y = (float) y; Z = (float) z; }
 
-        public Vector3(Vector3 vector3)
-        {
-            X = vector3.X;
-            Y = vector3.Y;
-            Z = vector3.Z;
-        }
+        public Vector3(Vector3 vector3) { X = vector3.X; Y = vector3.Y; Z = vector3.Z; }
 
 
         /// <summary>
         /// Converts this Vector3 to a string.
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"X: {X}, Y: {Y}, Z: {Z}";
-        }
+        public override string ToString() => $"X: {X}, Y: {Y}, Z: {Z}";
 
         #region Math
 
-        public static Vector3 FromFixedPoint(int x, int y, int z)
-        {
-            return new Vector3(
-                x / 32.0f,
-                y / 32.0f,
-                z / 32.0f
-            );
-        }
+        public static Vector3 FromFixedPoint(int x, int y, int z) => new Vector3(x / 32.0f, y / 32.0f, z / 32.0f);
 
 
-        public static Vector3 Floor(Vector3 vector3)
-        {
-            return new Vector3(Math.Floor(vector3.X), Math.Floor(vector3.Y), Math.Floor(vector3.Z));
-        }
-        public Vector3 Floor()
-        {
-            return Floor(this);
-        }
+        public static Vector3 Floor(Vector3 vector3) => new Vector3(Math.Floor(vector3.X), Math.Floor(vector3.Y), Math.Floor(vector3.Z));
+        public Vector3 Floor() => Floor(this);
 
-        public static Vector3 Ceiling(Vector3 vector3)
-        {
-            return new Vector3(Math.Ceiling(vector3.X), Math.Ceiling(vector3.Y), Math.Ceiling(vector3.Z));
-        }
-        public Vector3 Ceiling()
-        {
-            return Ceiling(this);
-        }
+        public static Vector3 Ceiling(Vector3 vector3) => new Vector3(Math.Ceiling(vector3.X), Math.Ceiling(vector3.Y), Math.Ceiling(vector3.Z));
+        public Vector3 Ceiling() => Ceiling(this);
 
 
-        private static double Square(double num)
-        {
-            return num * num;
-        }
-        
+        private static double Square(double num) => num * num;
+
         /// <summary>
         /// Calculates the distance between two Vector3 objects.
         /// </summary>
-        public double DistanceTo(Vector3 other)
-        {
-            return Math.Sqrt(Square(other.X - X) + Square(other.Y - Y) + Square(other.Z - Z));
-        }
+        public double DistanceTo(Vector3 other) => Math.Sqrt(Square(other.X - X) + Square(other.Y - Y) + Square(other.Z - Z));
+
         /// <summary>
         /// Finds the distance of this vector from Vector3.Zero
         /// </summary>
-        public double Distance()
-        {
-            return DistanceTo(Zero);
-        }
+        public double Distance() => DistanceTo(Zero);
 
-        public static Vector3 Min(Vector3 value1, Vector3 value2)
-        {
-            return new Vector3(
-                Math.Min(value1.X, value2.X),
-                Math.Min(value1.Y, value2.Y),
-                Math.Min(value1.Z, value2.Z)
-                );
-        }
-        public Vector3 Min(Vector3 value2)
-        {
-            return new Vector3(
-                Math.Min(X, value2.X),
-                Math.Min(Y, value2.Y),
-                Math.Min(Z, value2.Z)
-                );
-        }
+        public static Vector3 Min(Vector3 value1, Vector3 value2) => new Vector3(Math.Min(value1.X, value2.X), Math.Min(value1.Y, value2.Y), Math.Min(value1.Z, value2.Z));
+        public Vector3 Min(Vector3 value2) => new Vector3(Math.Min(X, value2.X), Math.Min(Y, value2.Y), Math.Min(Z, value2.Z));
 
-        public static Vector3 Max(Vector3 value1, Vector3 value2)
-        {
-            return new Vector3(
-                Math.Max(value1.X, value2.X),
-                Math.Max(value1.Y, value2.Y),
-                Math.Max(value1.Z, value2.Z)
-                );
-        }
-        public Vector3 Max(Vector3 value2)
-        {
-            return new Vector3(
-                Math.Max(X, value2.X),
-                Math.Max(Y, value2.Y),
-                Math.Max(Z, value2.Z)
-                );
-        }
+        public static Vector3 Max(Vector3 value1, Vector3 value2) => new Vector3(Math.Max(value1.X, value2.X), Math.Max(value1.Y, value2.Y), Math.Max(value1.Z, value2.Z));
+        public Vector3 Max(Vector3 value2) => new Vector3(Math.Max(X, value2.X), Math.Max(Y, value2.Y), Math.Max(Z, value2.Z));
 
-        public static Vector3 Delta(Vector3 firstLocation, Vector3 secondLocation)
-        {
-            return new Vector3(
-                firstLocation.X - secondLocation.X,
-                firstLocation.Y - secondLocation.Y,
-                firstLocation.Z - secondLocation.Z
-                );
-        }
-        public Vector3 Delta(Vector3 secondLocation)
-        {
-            return new Vector3(
-                X - secondLocation.X,
-                Y - secondLocation.Y,
-                Z - secondLocation.Z
-                );
-        }
+        public static Vector3 Delta(Vector3 firstLocation, Vector3 secondLocation) => new Vector3(firstLocation.X - secondLocation.X, firstLocation.Y - secondLocation.Y, firstLocation.Z - secondLocation.Z);
+        public Vector3 Delta(Vector3 secondLocation) => new Vector3(X - secondLocation.X, Y - secondLocation.Y, Z - secondLocation.Z);
 
 
         public static float ToYaw(Vector3 position, Vector3 look)
@@ -185,10 +95,7 @@ namespace Aragas.Core.Data
 
             return new Vector3(x, y, z);
         }
-        public Vector3 Yaw(float angle)
-        {
-            return Yaw(this, angle);
-        }
+        public Vector3 Yaw(float angle) => Yaw(this, angle);
 
         public static float ToPitch(Vector3 position, Vector3 look)
         {
@@ -204,10 +111,7 @@ namespace Aragas.Core.Data
 
             return new Vector3(x, y, z);
         }
-        public Vector3 Pitch(float angle)
-        {
-            return Pitch(this, angle);
-        }
+        public Vector3 Pitch(float angle) => Pitch(this, angle);
 
         public static Vector3 Roll(Vector3 look, float angle)
         {
@@ -217,123 +121,43 @@ namespace Aragas.Core.Data
 
             return new Vector3(x, y, z);
         }
-        public Vector3 Roll(float angle)
-        {
-            return Roll(this, angle);
-        }
+        public Vector3 Roll(float angle) => Roll(this, angle);
 
 
-        public static float ToRadians(float val)
-        {
-            return (float) (val * Math.PI / 180.0f);
-        }
+        public static float ToRadians(float val) => (float) (val * Math.PI / 180.0f);
 
         #endregion
 
         #region Operators
 
-        public static Vector3 operator -(Vector3 a)
-        {
-            return new Vector3(-a.X, -a.Y, -a.Z);
-        }
-        public static Vector3 operator ++(Vector3 a)
-        {
-            return new Vector3(a.X, a.Y, a.Z) + 1.0;
-        }
-        public static Vector3 operator --(Vector3 a)
-        {
-            return new Vector3(a.X, a.Y, a.Z) - 1.0;
-        }
+        public static Vector3 operator -(Vector3 a) => new Vector3(-a.X, -a.Y, -a.Z);
+        public static Vector3 operator ++(Vector3 a) => new Vector3(a.X, a.Y, a.Z) + 1.0;
+        public static Vector3 operator --(Vector3 a) => new Vector3(a.X, a.Y, a.Z) - 1.0;
 
-        public static bool operator !=(Vector3 a, Vector3 b)
-        {
-            return !a.Equals(b);
-        }
-        public static bool operator ==(Vector3 a, Vector3 b)
-        {
-            return a.Equals(b);
-        }
+        public static bool operator !=(Vector3 a, Vector3 b) => !a.Equals(b);
+        public static bool operator ==(Vector3 a, Vector3 b) => a.Equals(b);
+        public static bool operator >(Vector3 a, Vector3 b) => a.X > b.X && a.Y > b.Y && a.Z > b.Z;
+        public static bool operator <(Vector3 a, Vector3 b) => a.X < b.X && a.Y < b.Y && a.Z < b.Z;
+        public static bool operator >=(Vector3 a, Vector3 b) => a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z;
+        public static bool operator <=(Vector3 a, Vector3 b) => a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
 
-        public static bool operator >(Vector3 a, Vector3 b)
-        {
-            return a.X > b.X && a.Y > b.Y && a.Z > b.Z;
-        }
-        public static bool operator <(Vector3 a, Vector3 b)
-        {
-            return a.X < b.X && a.Y < b.Y && a.Z < b.Z;
-        }
+        public static Vector3 operator +(Vector3 a, Vector3 b) => new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+        public static Vector3 operator -(Vector3 a, Vector3 b) => new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        public static Vector3 operator *(Vector3 a, Vector3 b) => new Vector3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+        public static Vector3 operator /(Vector3 a, Vector3 b) => new Vector3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+        public static Vector3 operator %(Vector3 a, Vector3 b) => new Vector3(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
 
-        public static bool operator >=(Vector3 a, Vector3 b)
-        {
-            return a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z;
-        }
-        public static bool operator <=(Vector3 a, Vector3 b)
-        {
-            return a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
-        }
+        public static Vector3 operator +(Vector3 a, double b) => new Vector3(a.X + b, a.Y + b, a.Z + b);
+        public static Vector3 operator -(Vector3 a, double b) => new Vector3(a.X - b, a.Y - b, a.Z - b);
+        public static Vector3 operator *(Vector3 a, double b) => new Vector3(a.X * b, a.Y * b, a.Z * b);
+        public static Vector3 operator /(Vector3 a, double b) => new Vector3(a.X / b, a.Y / b, a.Z / b);
+        public static Vector3 operator %(Vector3 a, double b) => new Vector3(a.X % b, a.Y % b, a.Y % b);
 
-        public static Vector3 operator +(Vector3 a, Vector3 b)
-        {
-            return new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-        }
-        public static Vector3 operator -(Vector3 a, Vector3 b)
-        {
-            return new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-        }
-        public static Vector3 operator *(Vector3 a, Vector3 b)
-        {
-            return new Vector3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
-        }
-        public static Vector3 operator /(Vector3 a, Vector3 b)
-        {
-            return new Vector3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
-        }
-        public static Vector3 operator %(Vector3 a, Vector3 b)
-        {
-            return new Vector3(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
-        }
-
-        public static Vector3 operator +(Vector3 a, double b)
-        {
-            return new Vector3(a.X + b, a.Y + b, a.Z + b);
-        }
-        public static Vector3 operator -(Vector3 a, double b)
-        {
-            return new Vector3(a.X - b, a.Y - b, a.Z - b);
-        }
-        public static Vector3 operator *(Vector3 a, double b)
-        {
-            return new Vector3(a.X * b, a.Y * b, a.Z * b);
-        }
-        public static Vector3 operator /(Vector3 a, double b)
-        {
-            return new Vector3(a.X / b, a.Y / b, a.Z / b);
-        }
-        public static Vector3 operator %(Vector3 a, double b)
-        {
-            return new Vector3(a.X % b, a.Y % b, a.Y % b);
-        }
-
-        public static Vector3 operator +(double a, Vector3 b)
-        {
-            return new Vector3(a + b.X, a + b.Y, a + b.Z);
-        }
-        public static Vector3 operator -(double a, Vector3 b)
-        {
-            return new Vector3(a - b.X, a - b.Y, a - b.Z);
-        }
-        public static Vector3 operator *(double a, Vector3 b)
-        {
-            return new Vector3(a * b.X, a * b.Y, a * b.Z);
-        }
-        public static Vector3 operator /(double a, Vector3 b)
-        {
-            return new Vector3(a / b.X, a / b.Y, a / b.Z);
-        }
-        public static Vector3 operator %(double a, Vector3 b)
-        {
-            return new Vector3(a % b.X, a % b.Y, a % b.Y);
-        }
+        public static Vector3 operator +(double a, Vector3 b) => new Vector3(a + b.X, a + b.Y, a + b.Z);
+        public static Vector3 operator -(double a, Vector3 b) => new Vector3(a - b.X, a - b.Y, a - b.Z);
+        public static Vector3 operator *(double a, Vector3 b) => new Vector3(a * b.X, a * b.Y, a * b.Z);
+        public static Vector3 operator /(double a, Vector3 b) => new Vector3(a / b.X, a / b.Y, a / b.Z);
+        public static Vector3 operator %(double a, Vector3 b) => new Vector3(a % b.X, a % b.Y, a % b.Y);
 
         #endregion
 
@@ -356,15 +180,8 @@ namespace Aragas.Core.Data
 
         #endregion
 
-        public bool Equals(Vector3 other)
-        {
-            return other.X.Equals(X) && other.Y.Equals(Y) && other.Z.Equals(Z);
-        }
-
-        public bool Equals(float other)
-        {
-            return other.Equals(X) && other.Equals(Y) && other.Equals(Z);
-        }
+        public bool Equals(Vector3 other) => other.X.Equals(X) && other.Y.Equals(Y) && other.Z.Equals(Z);
+        public bool Equals(float other) => other.Equals(X) && other.Equals(Y) && other.Equals(Z);
 
         public override bool Equals(object obj)
         {
@@ -377,9 +194,6 @@ namespace Aragas.Core.Data
             return Equals((Vector3)obj);
         }
 
-        public override int GetHashCode()
-        {
-            return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
-        }
+        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
     }
 }
