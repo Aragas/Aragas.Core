@@ -49,7 +49,7 @@ namespace Aragas.Core.Data
 
         #region Math
 
-        public static Vector3 FromFixedPoint(int x, int y, int z) => new Vector3(x / 32.0f, y / 32.0f, z / 32.0f);
+        public static Vector3 FromFixedPoint(long x, long y, long z) => new Vector3(x / 32.0f, y / 32.0f, z / 32.0f);
 
 
         public static Vector3 Floor(Vector3 vector3) => new Vector3(Math.Floor(vector3.X), Math.Floor(vector3.Y), Math.Floor(vector3.Z));
