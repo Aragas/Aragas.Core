@@ -6,10 +6,7 @@ namespace Aragas.Core.Wrappers
     {
         public string Key { get; set; }
 
-        public KeyPressedEventArgs(string key)
-        {
-            Key = key;
-        }
+        public KeyPressedEventArgs(string key) { Key = key; }
     }
 
     public interface IInputWrapper

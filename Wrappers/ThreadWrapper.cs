@@ -6,13 +6,13 @@ namespace Aragas.Core.Wrappers
     public delegate void ParameterizedThreadStart(object obj);
     public interface IThread
     {
-        string Name { get; set; }
-        bool IsBackground { get; set; }
+        String Name { get; set; }
+        Boolean IsBackground { get; set; }
 
-        bool IsRunning { get; }
+        Boolean IsRunning { get; }
 
         void Start();
-        void Start(object obj);
+        void Start(Object obj);
 
         void Abort();
     }

@@ -8,7 +8,7 @@ namespace Aragas.Core.Wrappers
     {
         Assembly GetAssembly(Type type);
         Assembly[] GetAssemblies();
-        Assembly LoadAssembly(byte[] assemblyData);
+        Assembly LoadAssembly(Byte[] assemblyData);
     }
 
     public static class AppDomainWrapper

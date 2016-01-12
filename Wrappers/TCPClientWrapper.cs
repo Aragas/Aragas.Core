@@ -5,32 +5,32 @@ namespace Aragas.Core.Wrappers
 {
     public interface ITCPClient : IDisposable
     {
-        string IP { get; }
-        ushort Port { get; }
-        bool Connected { get; }
-        int DataAvailable { get; }
+        String IP { get; }
+        UInt16 Port { get; }
+        Boolean Connected { get; }
+        Int32 DataAvailable { get; }
 
-        int RefreshConnectionInfoTime { get; set; }
+        Int32 RefreshConnectionInfoTime { get; set; }
 
 
-        ITCPClient Connect(string ip, ushort port);
+        ITCPClient Connect(String ip, UInt16 port);
         ITCPClient Disconnect();
 
-        void WriteByteArray(byte[] array);
-        byte[] ReadByteArray(int length);
+        void WriteByteArray(Byte[] array);
+        Byte[] ReadByteArray(Int32 length);
 
         Stream GetStream();
     }
 
-    public interface ITCPClientWrapper
+    public interface ITCPClientFactory
     {
         ITCPClient CreateTCPClient();
     }
 
     public static class TCPClientWrapper
     {
-        private static ITCPClientWrapper _instance;
-        public static ITCPClientWrapper Instance
+        private static ITCPClientFactory _instance;
+        public static ITCPClientFactory Instance
         {
             private get
             {

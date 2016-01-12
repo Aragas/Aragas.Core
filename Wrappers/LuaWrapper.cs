@@ -5,11 +5,11 @@ namespace Aragas.Core.Wrappers
 {
     public interface ILua
     {
-        bool ReloadFile();
+        Boolean ReloadFile();
 
-        Object this[string index] { get; set; }
+        Object this[String index] { get; set; }
 
-        Object[] CallFunction(string functionName, params object[] args);
+        Object[] CallFunction(String functionName, params Object[] args);
     }
 
     public interface ILuaTable

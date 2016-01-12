@@ -16,10 +16,7 @@ namespace Aragas.Core.Wrappers
         public Type BaseType { get; }
         public List<CustomTypeInfo> CustomTypes { get; } = new List<CustomTypeInfo>();
 
-        public DatabaseTableInfo(Type baseType)
-        {
-            BaseType = baseType;
-        }
+        public DatabaseTableInfo(Type baseType) { BaseType = baseType; }
     }
 
     public abstract class DatabaseTable
@@ -50,16 +47,16 @@ namespace Aragas.Core.Wrappers
 
     public interface IDatabase
     {
-        string FileExtension { get; }
+        String FileExtension { get; }
 
-        bool PrimitivesOnly { get; }
+        Boolean PrimitivesOnly { get; }
 
-        IDatabase CreateDB(string databaseName);
+        IDatabase CreateDB(String databaseName);
 
         void CreateTable<T>() where T : DatabaseTable, new();
         void Insert<T>(T obj) where T : DatabaseTable, new();
         void Update<T>(T obj) where T : DatabaseTable, new();
-        T Find<T>(Expression<Func<T, bool>> predicate) where T : DatabaseTable, new();
+        T Find<T>(Expression<Func<T, Boolean>> predicate) where T : DatabaseTable, new();
     }
 
     

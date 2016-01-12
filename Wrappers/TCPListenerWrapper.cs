@@ -4,8 +4,8 @@ namespace Aragas.Core.Wrappers
 {
     public interface ITCPListener : IDisposable
     {
-        ushort Port { get; }
-        bool AvailableClients { get; }
+        UInt16 Port { get; }
+        Boolean AvailableClients { get; }
 
         void Start();
         void Stop();
@@ -15,7 +15,7 @@ namespace Aragas.Core.Wrappers
 
     public interface ITCPListenerWrapper
     {
-        ITCPListener CreateTCPListener(ushort port);
+        ITCPListener CreateTCPListener(UInt16 port);
     }
 
     public static class TCPListenerWrapper
