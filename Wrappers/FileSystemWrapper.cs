@@ -9,7 +9,6 @@ namespace Aragas.Core.Wrappers
 {
     public interface IFileSystem
     {
-        IFolder UsersFolder { get;  }
         IFolder SettingsFolder { get; }
         IFolder LogFolder { get; }
         IFolder CrashLogFolder { get; }
@@ -34,7 +33,6 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        public static IFolder UsersFolder => Instance.UsersFolder;
         public static IFolder SettingsFolder => Instance.SettingsFolder;
         public static IFolder LogFolder => Instance.LogFolder;
         public static IFolder CrashLogFolder => Instance.CrashLogFolder;
