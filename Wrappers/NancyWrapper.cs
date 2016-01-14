@@ -17,7 +17,7 @@ namespace Aragas.Core.Wrappers
         public void Add(string page, Func<dynamic, dynamic> action) { List.Add(new PageAction(page, action));}
     }
 
-    public interface INancyCreatorWrapper
+    public interface INancyWrapper
     {
         void SetDataApi(NancyData data);
 
@@ -27,8 +27,8 @@ namespace Aragas.Core.Wrappers
 
     public static class NancyWrapper
     {
-        private static INancyCreatorWrapper _instance;
-        public static INancyCreatorWrapper Instance
+        private static INancyWrapper _instance;
+        public static INancyWrapper Instance
         {
             private get
             {
