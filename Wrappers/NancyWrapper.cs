@@ -17,8 +17,13 @@ namespace Aragas.Core.Wrappers
         public void Add(string page, Func<dynamic, dynamic> action) { List.Add(new PageAction(page, action));}
     }
 
-    public interface INancyWrapper { void Start(String url, UInt16 port); }
-    public interface INancyCreatorWrapper { INancyWrapper CreateNancyWrapper(NancyData data); }
+    public interface INancyCreatorWrapper
+    {
+        void SetDataApi(NancyData data);
+
+        void Start(String url, UInt16 port);
+        void Stop();
+    }
 
     public static class NancyWrapper
     {
@@ -34,6 +39,8 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
         
-        public static INancyWrapper CreateNancyWrapper(NancyData data) { return Instance.CreateNancyWrapper(data); }
+        public static void SetDataApi(NancyData data) { Instance.SetDataApi(data); }
+        public static void Start(string url, ushort port) { Instance.Start(url, port); }
+        public static void Stop() { Instance.Stop(); }
     }
 }
