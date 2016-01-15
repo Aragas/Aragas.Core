@@ -49,7 +49,6 @@ namespace Aragas.Core.Wrappers
     {
         String FileExtension { get; }
 
-        Boolean PrimitivesOnly { get; }
 
         IDatabase CreateDB(String databaseName);
 
