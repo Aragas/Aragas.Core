@@ -46,7 +46,6 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        //public static IThread CreateThread(Action action) {  return Instance.CreateThread(action); }
         public static IThread CreateThread(ThreadStart action) { return Instance.CreateThread(action); }
         public static IThread CreateThread(ParameterizedThreadStart action) { return Instance.CreateThread(action); }
 

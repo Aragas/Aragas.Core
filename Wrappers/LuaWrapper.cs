@@ -26,8 +26,8 @@ namespace Aragas.Core.Wrappers
     public interface ILuaWrapper
     {
         ILua CreateLua();
-        ILua CreateLua(string scriptName);
-        ILuaTable CreateTable(ILua lua, string tableName);
+        ILua CreateLua(String scriptName);
+        ILuaTable CreateTable(ILua lua, String tableName);
     }
 
     public static class LuaWrapper
