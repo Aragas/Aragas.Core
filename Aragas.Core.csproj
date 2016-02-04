@@ -41,7 +41,10 @@
     <Compile Include="Exceptions\ProtobufReadingException.cs" />
     <Compile Include="Extensions\BitMaskExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\IFileExtensions.cs" />
     <Compile Include="Extensions\PacketExtensions.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Interfaces\IAesStream.cs" />
     <Compile Include="IO\PacketStream.cs" />
     <Compile Include="IO\PacketDataReader.cs" />
