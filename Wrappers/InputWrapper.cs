@@ -19,7 +19,7 @@ namespace Aragas.Core.Wrappers
 
         void ConsoleWrite(String message);
         
-        void LogWriteLine(String message);
+        void LogWriteLine(DateTime time, String message);
     }
 
     public static class InputWrapper
@@ -43,6 +43,6 @@ namespace Aragas.Core.Wrappers
 
         public static void ConsoleWrite(string message) { Instance.ConsoleWrite(message); }
 
-        public static void LogWriteLine(string message) { Instance.LogWriteLine(message); }
+        public static void LogWriteLine(DateTime time, string message) { Instance.LogWriteLine(time, message); }
     }
 }
