@@ -6,9 +6,13 @@ solution: Aragas.Core.sln
 
 before_install:
   - git submodule update --init --recursive
+  - pip install --user codecov
   
 install:
   - nuget restore Aragas.Core.sln
+  
+after_success:
+  - codecov
 
 script:
   - xbuild /p:Configuration=Release Aragas.Core.sln
