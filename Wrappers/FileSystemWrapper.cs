@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 
-using Newtonsoft.Json;
-
 using PCLStorage;
 
 namespace Aragas.Core.Wrappers
@@ -42,12 +40,11 @@ namespace Aragas.Core.Wrappers
         public static IFolder ContentFolder => Instance.ContentFolder;
         public static IFolder OutputFolder => Instance.ContentFolder;
 
-        static readonly JsonConverter[] Converters = {
-        };
-
         public static bool LoadSettings<T>(string filename, T value)
         {
-            using (var stream = Instance.SettingsFolder.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists).Result.OpenAsync(FileAccess.ReadAndWrite).Result)
+            var config = ConfigWrapper.CreateConfig();
+
+            using (var stream = Instance.SettingsFolder.CreateFileAsync($"{filename}.{config.FileExtension}", CreationCollisionOption.OpenIfExists).Result.OpenAsync(FileAccess.ReadAndWrite).Result)
             using (var reader = new StreamReader(stream))
             using (var writer = new StreamWriter(stream))
             {
@@ -58,31 +55,31 @@ namespace Aragas.Core.Wrappers
                     {
                         if (value == null)
                         {
-                            value = (T) JsonConvert.DeserializeObject(file, new JsonSerializerSettings {Converters = Converters});
+                            value = config.Deserialize<T>(file);
                         }
                         else
                         {
-                            JsonConvert.PopulateObject(file, value, new JsonSerializerSettings {Converters = Converters});
+                            config.PopulateObject(file, value);
                             stream.SetLength(0);
-                            writer.Write(JsonConvert.SerializeObject(value, Formatting.Indented, Converters));
+                            writer.Write(config.Serialize(value));
                         }
                     }
-                    catch (JsonReaderException e)
+                    catch (ConfigDeserializingException)
                     {
                         stream.SetLength(0);
-                        writer.Write(JsonConvert.SerializeObject(value, Formatting.Indented, Converters));
+                        writer.Write(config.Serialize(value));
                         return false;
                     }
-                    catch (JsonWriterException e) { return false; }
+                    catch (ConfigSerializingException) { return false; }
                 }
                 else
                 {
                     try
                     {
                         stream.SetLength(0);
-                        writer.Write(JsonConvert.SerializeObject(value, Formatting.Indented, Converters));
+                        writer.Write(config.Serialize(value));
                     }
-                    catch (JsonWriterException e) { return false; }
+                    catch (ConfigSerializingException) { return false; }
                 }
             }
 
@@ -90,11 +87,13 @@ namespace Aragas.Core.Wrappers
         }
         public static bool SaveSettings<T>(string filename, T defaultValue = default(T))
         {
-            using (var stream = Instance.SettingsFolder.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists).Result.OpenAsync(FileAccess.ReadAndWrite).Result)
+            var config = ConfigWrapper.CreateConfig();
+
+            using (var stream = Instance.SettingsFolder.CreateFileAsync($"{filename}.{config.FileExtension}", CreationCollisionOption.OpenIfExists).Result.OpenAsync(FileAccess.ReadAndWrite).Result)
             using (var writer = new StreamWriter(stream))
             {
-                try { writer.Write(JsonConvert.SerializeObject(defaultValue, Formatting.Indented, Converters)); }
-                catch (JsonWriterException e) { return false; }
+                try { writer.Write(config.Serialize(defaultValue)); }
+                catch (ConfigSerializingException) { return false; }
             }
 
             return true;
