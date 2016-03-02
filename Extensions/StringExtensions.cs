@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace PokeD.Core.Extensions
+namespace Aragas.Core.Extensions
 {
     public static class StringExtensions
     {

@@ -39,6 +39,7 @@
     <Compile Include="Data\Vecto2.cs" />
     <Compile Include="Data\Vector3.cs" />
     <Compile Include="Exceptions\ProtobufReadingException.cs" />
+    <Compile Include="Extensions\Vector3Extensions.cs" />
     <Compile Include="Extensions\BitMaskExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\IFileExtensions.cs" />

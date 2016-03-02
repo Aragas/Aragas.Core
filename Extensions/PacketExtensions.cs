@@ -13,6 +13,7 @@ namespace Aragas.Core.Extensions
         {
             ExtendRead<TimeSpan>(ReadTimeSpan);
             ExtendRead<DateTime>(ReadDateTime);
+            ExtendRead<Vector2>(ReadVector2);
             ExtendRead<Vector3>(ReadVector3);
         }
 
@@ -33,7 +34,17 @@ namespace Aragas.Core.Extensions
         {
             return new DateTime(reader.Read<long>());
         }
-        
+
+        public static void Write(this PacketStream stream, Vector2 value)
+        {
+            stream.Write(value.X);
+            stream.Write(value.Y);
+        }
+        private static object ReadVector2(PacketDataReader reader, int length = 0)
+        {
+            return new Vector2(reader.Read<float>(), reader.Read<float>());
+        }
+
         public static void Write(this PacketStream stream, Vector3 value)
         {
             stream.Write(value.X);

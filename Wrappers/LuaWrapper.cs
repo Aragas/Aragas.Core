@@ -3,31 +3,35 @@ using System.Collections.Generic;
 
 namespace Aragas.Core.Wrappers
 {
-    public interface ILua
+    public abstract class LuaScript
     {
-        Boolean ReloadFile();
+        public abstract bool ReloadFile();
 
-        Object this[String index] { get; set; }
+        public abstract object this[string index] { get; set; }
 
-        Object[] CallFunction(String functionName, params Object[] args);
+        public abstract object[] CallFunction(string functionName, params object[] args);
     }
 
-    public interface ILuaTable
+    public abstract class LuaTable
     {
-        Object this[Object field] { get; set; }
-        Object this[String field] { get; set; }
+        public abstract object this[object field] { get; set; }
+        public abstract object this[string field] { get; set; }
 
-        Dictionary<Object, Object> ToDictionary();
+        public abstract object[] CallFunction(string functionName, params object[] args);
 
-        List<Object> ToList();
-        Object[] ToArray();
+        public abstract Dictionary<object, object> ToDictionary();
+
+        public abstract List<object> ToList();
+        public abstract object[] ToArray();
     }
 
     public interface ILuaWrapper
     {
-        ILua CreateLua();
-        ILua CreateLua(String scriptName);
-        ILuaTable CreateTable(ILua lua, String tableName);
+        LuaScript CreateLuaScript(string luaScriptName = "");
+
+        LuaTable CreateTable(LuaScript luaScript, string tableName);
+
+        LuaTable ToLuaTable(object obj);
     }
 
     public static class LuaWrapper
@@ -44,9 +48,10 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        public static ILua CreateLua() { return Instance.CreateLua(); }
-        public static ILua CreateLua(string scriptName) { return Instance.CreateLua(scriptName); }
+        public static LuaScript CreateLuaScript(string luaScriptName = "") => Instance.CreateLuaScript(luaScriptName);
 
-        public static ILuaTable CreateTable(ILua lua, string tableName) { return Instance.CreateTable(lua, tableName); }
+        public static LuaTable CreateTable(LuaScript luaScript, string tableName) => Instance.CreateTable(luaScript, tableName);
+
+        public static LuaTable ToLuaTable(object obj) => Instance.ToLuaTable(obj);
     }
 }

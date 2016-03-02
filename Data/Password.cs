@@ -42,7 +42,7 @@ namespace Aragas.Core.Data
         }
 
 
-        public PasswordStorage HashPassword()
+        private void HashPassword()
         {
             if (string.IsNullOrEmpty(Password))
                 Password = NoPassword;
@@ -56,8 +56,6 @@ namespace Aragas.Core.Data
 
             Hash = BitConverter.ToString(hashedPassword).Replace("-", "").ToLower();
             Password = string.Empty;
-
-            return this;
         }
         
         public override string ToString() => Hash;
