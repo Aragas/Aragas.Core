@@ -16,15 +16,15 @@ namespace Aragas.Core.Wrappers
         ITCPClient Connect(String ip, UInt16 port);
         ITCPClient Disconnect();
 
-        void WriteByteArray(Byte[] array);
-        Byte[] ReadByteArray(Int32 length);
+        int Write(byte[] buffer, int offset, int count);
+        int Read(byte[] buffer, int offset, int count);
 
         Stream GetStream();
     }
 
     public interface ITCPClientFactory
     {
-        ITCPClient CreateTCPClient();
+        ITCPClient Create();
     }
 
     public static class TCPClientWrapper
@@ -41,6 +41,6 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        public static ITCPClient CreateTCPClient() { return Instance.CreateTCPClient(); }
+        public static ITCPClient Create() { return Instance.Create(); }
     }
 }

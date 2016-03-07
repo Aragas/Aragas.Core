@@ -36,7 +36,7 @@ namespace Aragas.Core.Wrappers
 
     public interface IConfigFactory
     {
-        IConfigWrapper CreateConfig();
+        IConfigWrapper Create();
     }
 
     public static class ConfigWrapper
@@ -54,6 +54,6 @@ namespace Aragas.Core.Wrappers
         }
 
 
-        public static IConfigWrapper CreateConfig() { return Instance.CreateConfig(); }
+        public static IConfigWrapper Create() { return Instance.Create(); }
     }
 }

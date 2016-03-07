@@ -32,13 +32,17 @@ namespace Aragas.Core.Data
             //X = (float) (-Math.Cos(pitch) * Math.Sin(yaw));
             //Y = (float) -Math.Sin(pitch);
             //Z = (float) (Math.Cos(pitch) * Math.Cos(yaw));
+
+            //X = (float) (Math.Cos(yaw)*Math.Cos(pitch));
+            //Y = (float) Math.Sin(yaw);
+            //Z = (float) (Math.Cos(yaw) * Math.Sin(pitch));
         }
 
         public Vector3(float x, float y, float z) { X = x; Y = y; Z = z; }
 
         public Vector3(double x, double y, double z) { X = (float) x; Y = (float) y; Z = (float) z; }
 
-        public Vector3(Vector3 vector3) { X = vector3.X; Y = vector3.Y; Z = vector3.Z; }
+        public Vector3(Vector3 Vector3) { X = Vector3.X; Y = Vector3.Y; Z = Vector3.Z; }
 
 
         /// <summary>
@@ -49,27 +53,18 @@ namespace Aragas.Core.Data
 
         #region Math
 
-        public static Vector3 FromFixedPoint(long x, long y, long z) => new Vector3(x / 32.0f, y / 32.0f, z / 32.0f);
-
-
-        public static Vector3 Floor(Vector3 vector3) => new Vector3(Math.Floor(vector3.X), Math.Floor(vector3.Y), Math.Floor(vector3.Z));
+        public static Vector3 Floor(Vector3 Vector3) => new Vector3(Math.Floor(Vector3.X), Math.Floor(Vector3.Y), Math.Floor(Vector3.Z));
         public Vector3 Floor() => Floor(this);
 
-        public static Vector3 Ceiling(Vector3 vector3) => new Vector3(Math.Ceiling(vector3.X), Math.Ceiling(vector3.Y), Math.Ceiling(vector3.Z));
+        public static Vector3 Ceiling(Vector3 Vector3) => new Vector3(Math.Ceiling(Vector3.X), Math.Ceiling(Vector3.Y), Math.Ceiling(Vector3.Z));
         public Vector3 Ceiling() => Ceiling(this);
 
 
-        private static double Square(double num) => num * num;
+        private static float Square(float num) => num * num;
+        public static float DistanceTo(Vector3 value1, Vector3 value2) => value1.DistanceTo(value2);
+        public float DistanceTo(Vector3 other) => (float) Math.Sqrt(Square(other.X - X) + Square(other.Y - Y) + Square(other.Z - Z));
 
-        /// <summary>
-        /// Calculates the distance between two Vector3 objects.
-        /// </summary>
-        public double DistanceTo(Vector3 other) => Math.Sqrt(Square(other.X - X) + Square(other.Y - Y) + Square(other.Z - Z));
-
-        /// <summary>
-        /// Finds the distance of this vector from Vector3.Zero
-        /// </summary>
-        public double Distance() => DistanceTo(Zero);
+        public float Distance() => DistanceTo(Zero);
 
         public static Vector3 Min(Vector3 value1, Vector3 value2) => new Vector3(Math.Min(value1.X, value2.X), Math.Min(value1.Y, value2.Y), Math.Min(value1.Z, value2.Z));
         public Vector3 Min(Vector3 value2) => new Vector3(Math.Min(X, value2.X), Math.Min(Y, value2.Y), Math.Min(Z, value2.Z));
@@ -79,6 +74,30 @@ namespace Aragas.Core.Data
 
         public static Vector3 Delta(Vector3 firstLocation, Vector3 secondLocation) => new Vector3(firstLocation.X - secondLocation.X, firstLocation.Y - secondLocation.Y, firstLocation.Z - secondLocation.Z);
         public Vector3 Delta(Vector3 secondLocation) => new Vector3(X - secondLocation.X, Y - secondLocation.Y, Z - secondLocation.Z);
+
+        public static Vector3 Normalize(Vector3 value)
+        {
+            var factor = DistanceTo(value, Zero);
+            factor = 1f / factor;
+            return new Vector3(value.X * factor, value.Y * factor, value.Z * factor);
+        }
+        public Vector3 Normalize() => Normalize(this);
+
+        public static Vector3 Reflect(Vector3 vector, Vector3 normal)
+        {
+            var dotProduct = ((vector.X * normal.X) + (vector.Y * normal.Y)) + (vector.Z * normal.Z);
+            return new Vector3(
+                vector.X - (2.0f * normal.X) * dotProduct,
+                vector.Y - (2.0f * normal.Y) * dotProduct,
+                vector.Z - (2.0f * normal.Z) * dotProduct);
+        }
+        public Vector3 Reflect(Vector3 normal) => Reflect(this, normal);
+
+        public static float Dot(Vector3 value1, Vector3 value2) => value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z;
+        public float Dot(Vector3 value2) => Dot(this, value2);
+
+        public static Vector3 Cross(Vector3 vector1, Vector3 vector2) => new Vector3(vector1.Y * vector2.Z - vector2.Y * vector1.Z, -(vector1.X * vector2.Z - vector2.X * vector1.Z), vector1.X * vector2.Y - vector2.X * vector1.Y);
+        public Vector3 Cross(Vector3 vector2) => Cross(this, vector2);
 
 
         public static float ToYaw(Vector3 position, Vector3 look)
@@ -113,6 +132,10 @@ namespace Aragas.Core.Data
         }
         public Vector3 Pitch(float angle) => Pitch(this, angle);
 
+        public static float ToRoll(Vector3 position, Vector3 look)
+        {
+            return 0.0f;
+        }
         public static Vector3 Roll(Vector3 look, float angle)
         {
             var x = (look.X * Math.Cos(angle)) - (look.Y * Math.Sin(angle));
@@ -131,8 +154,8 @@ namespace Aragas.Core.Data
         #region Operators
 
         public static Vector3 operator -(Vector3 a) => new Vector3(-a.X, -a.Y, -a.Z);
-        public static Vector3 operator ++(Vector3 a) => new Vector3(a.X, a.Y, a.Z) + 1.0;
-        public static Vector3 operator --(Vector3 a) => new Vector3(a.X, a.Y, a.Z) - 1.0;
+        public static Vector3 operator ++(Vector3 a) => new Vector3(a.X, a.Y, a.Z) + One;
+        public static Vector3 operator --(Vector3 a) => new Vector3(a.X, a.Y, a.Z) - One;
 
         public static bool operator !=(Vector3 a, Vector3 b) => !a.Equals(b);
         public static bool operator ==(Vector3 a, Vector3 b) => a.Equals(b);
@@ -147,17 +170,17 @@ namespace Aragas.Core.Data
         public static Vector3 operator /(Vector3 a, Vector3 b) => new Vector3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
         public static Vector3 operator %(Vector3 a, Vector3 b) => new Vector3(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
 
-        public static Vector3 operator +(Vector3 a, double b) => new Vector3(a.X + b, a.Y + b, a.Z + b);
-        public static Vector3 operator -(Vector3 a, double b) => new Vector3(a.X - b, a.Y - b, a.Z - b);
-        public static Vector3 operator *(Vector3 a, double b) => new Vector3(a.X * b, a.Y * b, a.Z * b);
-        public static Vector3 operator /(Vector3 a, double b) => new Vector3(a.X / b, a.Y / b, a.Z / b);
-        public static Vector3 operator %(Vector3 a, double b) => new Vector3(a.X % b, a.Y % b, a.Y % b);
+        public static Vector3 operator +(Vector3 a, float b) => new Vector3(a.X + b, a.Y + b, a.Z + b);
+        public static Vector3 operator -(Vector3 a, float b) => new Vector3(a.X - b, a.Y - b, a.Z - b);
+        public static Vector3 operator *(Vector3 a, float b) => new Vector3(a.X * b, a.Y * b, a.Z * b);
+        public static Vector3 operator /(Vector3 a, float b) => new Vector3(a.X / b, a.Y / b, a.Z / b);
+        public static Vector3 operator %(Vector3 a, float b) => new Vector3(a.X % b, a.Y % b, a.Z % b);
 
-        public static Vector3 operator +(double a, Vector3 b) => new Vector3(a + b.X, a + b.Y, a + b.Z);
-        public static Vector3 operator -(double a, Vector3 b) => new Vector3(a - b.X, a - b.Y, a - b.Z);
-        public static Vector3 operator *(double a, Vector3 b) => new Vector3(a * b.X, a * b.Y, a * b.Z);
-        public static Vector3 operator /(double a, Vector3 b) => new Vector3(a / b.X, a / b.Y, a / b.Z);
-        public static Vector3 operator %(double a, Vector3 b) => new Vector3(a % b.X, a % b.Y, a % b.Y);
+        public static Vector3 operator +(float a, Vector3 b) => new Vector3(a + b.X, a + b.Y, a + b.Z);
+        public static Vector3 operator -(float a, Vector3 b) => new Vector3(a - b.X, a - b.Y, a - b.Z);
+        public static Vector3 operator *(float a, Vector3 b) => new Vector3(a * b.X, a * b.Y, a * b.Z);
+        public static Vector3 operator /(float a, Vector3 b) => new Vector3(a / b.X, a / b.Y, a / b.Z);
+        public static Vector3 operator %(float a, Vector3 b) => new Vector3(a % b.X, a % b.Y, a % b.Z);
 
         #endregion
 
@@ -173,10 +196,9 @@ namespace Aragas.Core.Data
         public static readonly Vector3 Backwards = new Vector3(0, 0, -1);
         public static readonly Vector3 Forwards = new Vector3(0, 0, 1);
 
-        public static readonly Vector3 East = new Vector3(1, 0, 0);
-        public static readonly Vector3 West = new Vector3(-1, 0, 0);
-        public static readonly Vector3 North = new Vector3(0, 0, -1);
-        public static readonly Vector3 South = new Vector3(0, 0, 1);
+        public static readonly Vector3 UnitX = new Vector3(1f, 0f, 0f);
+        public static readonly Vector3 UnitY = new Vector3(0f, 1f, 0f);
+        public static readonly Vector3 UnitZ = new Vector3(0f, 0f, 1f);
 
         #endregion
 

@@ -18,7 +18,7 @@ namespace Aragas.Core.Data
 
         public Vector2(double x, double y) { X = (float) x; Y = (float) y; }
 
-        public Vector2(Vector2 vector2) { X = vector2.X; Y = vector2.Y; }
+        public Vector2(Vector2 Vector2) { X = Vector2.X; Y = Vector2.Y; }
 
 
         /// <summary>
@@ -29,13 +29,10 @@ namespace Aragas.Core.Data
 
         #region Math
 
-        public static Vector2 FromFixedPoint(int x, int y) => new Vector2(x / 32.0f, y / 32.0f);
-        
-
-        public static Vector2 Floor(Vector2 vector2) => new Vector2(Math.Floor(vector2.X), Math.Floor(vector2.Y));
+        public static Vector2 Floor(Vector2 Vector2) => new Vector2(Math.Floor(Vector2.X), Math.Floor(Vector2.Y));
         public Vector2 Floor() => Floor(this);
 
-        public static Vector2 Ceiling(Vector2 vector2) => new Vector2(Math.Ceiling(vector2.X), Math.Ceiling(vector2.Y));
+        public static Vector2 Ceiling(Vector2 Vector2) => new Vector2(Math.Ceiling(Vector2.X), Math.Ceiling(Vector2.Y));
         public Vector2 Ceiling() => Ceiling(this);
 
 

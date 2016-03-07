@@ -2,14 +2,12 @@
 using System.IO;
 using System.Text;
 
-using Aragas.Core.Data;
-
 namespace Aragas.Core.IO
 {
     /// <summary>
-    /// Data reader that uses variants for length decoding.
+    /// Data reader that uses int for length decoding.
     /// </summary>
-    public class ProtobufDataReader : PacketDataReader
+    public class StandardDataReader : PacketDataReader
     {
         public override bool IsServer { get; }
 
@@ -17,12 +15,12 @@ namespace Aragas.Core.IO
 
         private readonly Stream _stream;
         
-        public ProtobufDataReader(Stream stream, bool isServer = false)
+        public StandardDataReader(Stream stream, bool isServer = false)
         {
             _stream = stream;
             IsServer = isServer;
         }
-        public ProtobufDataReader(byte[] data, bool isServer = false)
+        public StandardDataReader(byte[] data, bool isServer = false)
         {
             _stream = new MemoryStream(data);
             IsServer = isServer;
@@ -43,18 +41,6 @@ namespace Aragas.Core.IO
 
                 if (type == typeof (string[]))
                     return (T) (object) ReadStringArray(length);
-                if (type == typeof (VarShort[]))
-                    return (T) (object) ReadVarShortArray(length);
-                if (type == typeof (VarZShort[]))
-                    return (T) (object) ReadVarZShortArray(length);
-                if (type == typeof (VarInt[]))
-                    return (T) (object) ReadVarIntArray(length);
-                if (type == typeof (VarZInt[]))
-                    return (T) (object) ReadVarIntArray(length);
-                if (type == typeof (VarLong[]))
-                    return (T) (object) ReadVarLongArray(length);
-                if (type == typeof (VarZLong[]))
-                    return (T) (object) ReadVarZLongArray(length);
                 if (type == typeof (int[]))
                     return (T) (object) ReadIntArray(length);
                 if (type == typeof (byte[]))
@@ -71,20 +57,6 @@ namespace Aragas.Core.IO
 
             if (type == typeof (string))
                 return (T) (object) ReadString();
-
-            if (type == typeof (VarShort))
-                return (T) (object) ReadVarShort();
-            if (type == typeof (VarZShort))
-                return (T) (object) ReadVarZShort();
-            if (type == typeof (VarInt))
-                return (T) (object) ReadVarInt();
-            if (type == typeof (VarZInt))
-                return (T) (object) ReadVarZInt();
-            if (type == typeof (VarLong))
-                return (T) (object) ReadVarLong();
-            if (type == typeof (VarZLong))
-                return (T) (object) ReadVarZLong();
-
 
             if (type == typeof (bool))
                 return (T) (object) ReadBoolean();
@@ -122,18 +94,6 @@ namespace Aragas.Core.IO
 
             if (type == typeof (string[]))
                 return (T) (object) ReadStringArray();
-            if (type == typeof (VarShort[]))
-                return (T) (object) ReadVarShortArray();
-            if (type == typeof (VarZShort[]))
-                return (T) (object) ReadVarZShortArray();
-            if (type == typeof (VarInt[]))
-                return (T) (object) ReadVarIntArray();
-            if (type == typeof (VarZInt[]))
-                return (T) (object) ReadVarIntArray();
-            if (type == typeof (VarLong[]))
-                return (T) (object) ReadVarLongArray();
-            if (type == typeof (VarZLong[]))
-                return (T) (object) ReadVarZLongArray();
             if (type == typeof (int[]))
                 return (T) (object) ReadIntArray();
             if (type == typeof (byte[]))
@@ -147,22 +107,12 @@ namespace Aragas.Core.IO
         private string ReadString(int length = 0)
         {
             if (length == 0)
-                length = ReadVarInt();
+                length = ReadInt();
 
             var stringBytes = ReadByteArray(length);
 
             return Encoding.GetString(stringBytes, 0, stringBytes.Length);
         }
-
-        // -- Variants
-        public VarShort ReadVarShort() { return VarShort.Decode(_stream); }
-        public VarZShort ReadVarZShort() { return VarZShort.Decode(_stream); }
-
-        public VarInt ReadVarInt() { return VarInt.Decode(_stream); }
-        public VarZInt ReadVarZInt() { return VarZInt.Decode(_stream); }
-
-        public VarLong ReadVarLong() { return VarLong.Decode(_stream); }
-        public VarZLong ReadVarZLong() { return VarZLong.Decode(_stream); }
 
         // -- Boolean
         private bool ReadBoolean() { return Convert.ToBoolean(ReadByte()); }
@@ -243,7 +193,7 @@ namespace Aragas.Core.IO
         // -- StringArray
         private string[] ReadStringArray()
         {
-            var length = ReadVarInt();
+            var length = ReadInt();
             return ReadStringArray(length);
         }
         private string[] ReadStringArray(int length)
@@ -256,101 +206,10 @@ namespace Aragas.Core.IO
             return myStrings;
         }
 
-        // -- Variant Array
-        private VarShort[] ReadVarShortArray()
-        {
-            var length = ReadVarInt();
-            return ReadVarShortArray(length);
-        }
-        private VarShort[] ReadVarShortArray(int length)
-        {
-            var myInts = new VarShort[length];
-
-            for (var i = 0; i < length; i++)
-                myInts[i] = ReadVarShort();
-
-            return myInts;
-        }
-
-        private VarZShort[] ReadVarZShortArray()
-        {
-            var length = ReadVarInt();
-            return ReadVarZShortArray(length);
-        }
-        private VarZShort[] ReadVarZShortArray(int length)
-        {
-            var myInts = new VarZShort[length];
-
-            for (var i = 0; i < length; i++)
-                myInts[i] = ReadVarZShort();
-
-            return myInts;
-        }
-
-        private VarInt[] ReadVarIntArray()
-        {
-            var length = ReadVarInt();
-            return ReadVarIntArray(length);
-        }
-        private VarInt[] ReadVarIntArray(int length)
-        {
-            var myInts = new VarInt[length];
-
-            for (var i = 0; i < length; i++)
-                myInts[i] = ReadVarInt();
-
-            return myInts;
-        }
-
-        private VarZInt[] ReadVarZIntArray()
-        {
-            var length = ReadVarInt();
-            return ReadVarZIntArray(length);
-        }
-        private VarZInt[] ReadVarZIntArray(int length)
-        {
-            var myInts = new VarZInt[length];
-
-            for (var i = 0; i < length; i++)
-                myInts[i] = ReadVarZInt();
-
-            return myInts;
-        }
-
-        private VarLong[] ReadVarLongArray()
-        {
-            var length = ReadVarInt();
-            return ReadVarLongArray(length);
-        }
-        private VarLong[] ReadVarLongArray(int length)
-        {
-            var myInts = new VarLong[length];
-
-            for (var i = 0; i < length; i++)
-                myInts[i] = ReadVarLong();
-
-            return myInts;
-        }
-
-        private VarZLong[] ReadVarZLongArray()
-        {
-            var length = ReadVarInt();
-            return ReadVarZLongArray(length);
-        }
-        private VarZLong[] ReadVarZLongArray(int length)
-        {
-            var myInts = new VarZLong[length];
-
-            for (var i = 0; i < length; i++)
-                myInts[i] = ReadVarZLong();
-
-            return myInts;
-        }
-
         // -- IntArray
         private int[] ReadIntArray()
         {
-            var length = ReadVarInt();
+            var length = ReadInt();
             return ReadIntArray(length);
         }
         private int[] ReadIntArray(int length)
@@ -366,7 +225,7 @@ namespace Aragas.Core.IO
         // -- ByteArray
         private byte[] ReadByteArray()
         {
-            var length = ReadVarInt();
+            var length = ReadInt();
             return ReadByteArray(length);
         }
         private byte[] ReadByteArray(int length)

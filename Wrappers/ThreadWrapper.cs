@@ -21,8 +21,8 @@ namespace Aragas.Core.Wrappers
     public interface IThreadWrapper
     {
         //IThread CreateThread(Action action);
-        IThread CreateThread(ThreadStart action);
-        IThread CreateThread(ParameterizedThreadStart action);
+        IThread Create(ThreadStart action);
+        IThread Create(ParameterizedThreadStart action);
 
         void Sleep(Int32 milliseconds);
 
@@ -46,8 +46,8 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        public static IThread CreateThread(ThreadStart action) { return Instance.CreateThread(action); }
-        public static IThread CreateThread(ParameterizedThreadStart action) { return Instance.CreateThread(action); }
+        public static IThread Create(ThreadStart action) { return Instance.Create(action); }
+        public static IThread Create(ParameterizedThreadStart action) { return Instance.Create(action); }
 
         public static void Sleep(int milliseconds) { Instance.Sleep(milliseconds); }
 

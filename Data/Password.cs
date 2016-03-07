@@ -5,6 +5,9 @@ using Org.BouncyCastle.Crypto.Digests;
 
 namespace Aragas.Core.Data
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PasswordStorage
     {
         private const string NoPassword = "PUT_PASSWORD_HERE";

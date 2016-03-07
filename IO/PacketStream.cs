@@ -1,78 +1,91 @@
-﻿using System;
+﻿using System.IO;
 
 using Aragas.Core.Data;
 using Aragas.Core.Packets;
 
 namespace Aragas.Core.IO
 {
-    /// <summary>
-    /// Object that reads VarInt (or Byte) and ByteArray for handling Data later 
-    /// and writes any data from packet to user-defined object, that will interact with Minecraft Server.
-    /// </summary>
-    public abstract class PacketStream : IDisposable
+    public interface IEncryptedStream
     {
-        public abstract Boolean IsServer { get; }
-        public abstract String Host { get; }
-        public abstract UInt16 Port { get; }
-        public abstract Boolean Connected { get; }
-        public abstract Int32 DataAvailable { get; }
-        public abstract Boolean EncryptionEnabled { get; protected set; }
+        bool EncryptionEnabled { get; }
 
-        public abstract void Connect(String ip, UInt16 port);
+        void InitializeEncryption(byte[] key);
+    }
+
+    public interface ICompressedStream
+    {
+
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public abstract partial class PacketStream
+    {
+        public abstract bool IsServer { get; }
+        public abstract string Host { get; }
+        public abstract ushort Port { get; }
+        public abstract bool Connected { get; }
+        public abstract int DataAvailable { get; }
+
+        protected abstract Stream BaseStream { get; }
+
+        public abstract void Connect(string ip, ushort port);
         public abstract void Disconnect();
 
-        public abstract void SendPacket(ref ProtobufPacket packet);
-
-        public abstract void InitializeEncryption(Byte[] key);
+        public abstract void SendPacket<TIDType, TPacketType>(ref Packet<TIDType, TPacketType> packet) where TPacketType : Packet;
 
 
         #region Write
 
-        public abstract void Write(String value, Int32 length = 0);
+        public abstract void Write(string value, int length = 0);
 
+        public abstract void Write(VarShort value);
+        public abstract void Write(VarZShort value);
         public abstract void Write(VarInt value);
+        public abstract void Write(VarZInt value);
+        public abstract void Write(VarLong value);
+        public abstract void Write(VarZLong value);
 
-        public abstract void Write(Boolean value);
+        public abstract void Write(bool value);
 
-        public abstract void Write(SByte value);
-        public abstract void Write(Byte value);
+        public abstract void Write(sbyte value);
+        public abstract void Write(byte value);
 
-        public abstract void Write(Int16 value);
-        public abstract void Write(UInt16 value);
+        public abstract void Write(short value);
+        public abstract void Write(ushort value);
 
-        public abstract void Write(Int32 value);
-        public abstract void Write(UInt32 value);
+        public abstract void Write(int value);
+        public abstract void Write(uint value);
 
-        public abstract void Write(Int64 value);
-        public abstract void Write(UInt64 value);
+        public abstract void Write(long value);
+        public abstract void Write(ulong value);
 
-        public abstract void Write(Double value);
+        public abstract void Write(double value);
 
-        public abstract void Write(Single value);
+        public abstract void Write(float value);
 
 
-        public abstract void Write(String[] value);
+        public abstract void Write(string[] value);
 
-        public abstract void Write(Int32[] value);
+        public abstract void Write(int[] value);
 
+        public abstract void Write(VarShort[] value);
+        public abstract void Write(VarZShort[] value);
         public abstract void Write(VarInt[] value);
+        public abstract void Write(VarZInt[] value);
+        public abstract void Write(VarLong[] value);
+        public abstract void Write(VarZLong[] value);
 
-        public abstract void Write(Byte[] value);
+        public abstract void Write(byte[] value);
 
         #endregion Write
 
 
         #region Read
 
-        public abstract Byte ReadByte();
-
         public abstract VarInt ReadVarInt();
 
-        public abstract Byte[] ReadByteArray(Int32 length);
-
         #endregion Read
-
-
-        public abstract void Dispose();
     }
 }

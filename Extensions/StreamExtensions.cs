@@ -6,7 +6,7 @@ namespace Aragas.Core.Extensions
     {
         public static byte[] ReadFully(this Stream stream)
         {
-            var buffer = new byte[16*1024];
+            var buffer = new byte[16 * 1024];
             using (var ms = new MemoryStream())
             {
                 int read;

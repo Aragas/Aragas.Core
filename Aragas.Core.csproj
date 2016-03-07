@@ -34,11 +34,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data\Variant.cs" />
+    <Compile Include="Data\VarZShort.cs" />
+    <Compile Include="Data\VarZInt.cs" />
+    <Compile Include="Data\VarZLong.cs" />
+    <Compile Include="Data\VarShort.cs" />
+    <Compile Include="Data\VarString.cs" />
+    <Compile Include="Data\VarLong.cs" />
     <Compile Include="Data\Password.cs" />
     <Compile Include="Data\VarInt.cs" />
-    <Compile Include="Data\Vecto2.cs" />
+    <Compile Include="Data\Vector2.cs" />
     <Compile Include="Data\Vector3.cs" />
-    <Compile Include="Exceptions\ProtobufReadingException.cs" />
+    <Compile Include="Extensions\Vector2Extensions.cs" />
     <Compile Include="Extensions\Vector3Extensions.cs" />
     <Compile Include="Extensions\BitMaskExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
@@ -46,14 +53,20 @@
     <Compile Include="Extensions\PacketExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Interfaces\IAesStream.cs" />
+    <Compile Include="IO\AesStream.cs" />
+    <Compile Include="IO\BouncyCastleAes.Stream.cs" />
+    <Compile Include="IO\PacketStream.Stream.cs" />
     <Compile Include="IO\PacketStream.cs" />
     <Compile Include="IO\PacketDataReader.cs" />
     <Compile Include="Interfaces\IUpdatable.cs" />
-    <Compile Include="IO\BouncyCastleAES.cs" />
+    <Compile Include="IO\BouncyCastleAes.cs" />
+    <Compile Include="IO\StandardDataReader.cs" />
     <Compile Include="IO\ProtobufDataReader.cs" />
+    <Compile Include="IO\StandardStream.cs" />
     <Compile Include="IO\ProtobufStream.cs" />
+    <Compile Include="Packets\Packet.cs" />
     <Compile Include="Packets\ProtobufPacket.cs" />
+    <Compile Include="Packets\StandardPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wrappers\AppDomainWrapper.cs" />
     <Compile Include="Wrappers\FileSystemWrapper.cs" />

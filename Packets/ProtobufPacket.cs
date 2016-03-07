@@ -1,20 +1,9 @@
-﻿using Aragas.Core.Data;
-using Aragas.Core.IO;
+using Aragas.Core.Data;
 
 namespace Aragas.Core.Packets
 {
-    public abstract class ProtobufPacket
-    {
-        public abstract VarInt ID { get; }
-
-        /// <summary>
-        /// Read packet from IPacketDataReader.
-        /// </summary>
-        public abstract ProtobufPacket ReadPacket(PacketDataReader reader);
-
-        /// <summary>
-        /// Write packet to IPacketStream.
-        /// </summary>
-        public abstract ProtobufPacket WritePacket(PacketStream writer);
-    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public abstract class ProtobufPacket : Packet<VarInt, ProtobufPacket> { }
 }

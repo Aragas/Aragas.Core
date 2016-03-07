@@ -45,24 +45,24 @@ namespace Aragas.Core.Wrappers
 		public int Id { get; set; }
     }
 
-    public interface IDatabase
+    public abstract class Database
     {
-        String FileExtension { get; }
+        public abstract string FileExtension { get; }
 
 
-        IDatabase CreateDB(String databaseName);
+        public abstract Database Create(string databaseName);
 
-        void CreateTable<T>() where T : DatabaseTable, new();
-        void Insert<T>(T obj) where T : DatabaseTable, new();
-        void Update<T>(T obj) where T : DatabaseTable, new();
-        T Find<T>(Expression<Func<T, Boolean>> predicate) where T : DatabaseTable, new();
+        public abstract void CreateTable<T>() where T : DatabaseTable, new();
+        public abstract void Insert<T>(T obj) where T : DatabaseTable, new();
+        public abstract void Update<T>(T obj) where T : DatabaseTable, new();
+        public abstract T Find<T>(Expression<Func<T, bool>> predicate) where T : DatabaseTable, new();
     }
 
     
     public static class DatabaseWrapper
     {
-        private static IDatabase _instance;
-        public static IDatabase Instance
+        private static Database _instance;
+        public static Database Instance
         {
             private get
             {
@@ -73,6 +73,6 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        public static IDatabase Create(string databaseName) { return Instance.CreateDB(databaseName); }
+        public static Database Create(string databaseName) { return Instance.Create(databaseName); }
     }
 }

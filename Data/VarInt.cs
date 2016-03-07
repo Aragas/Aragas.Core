@@ -1,42 +1,64 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 
 namespace Aragas.Core.Data
 {
-    public struct VarInt
+    /// <summary>
+    /// Encoded Int32. Not optimal for negative values.
+    /// </summary>
+    public class VarInt : Variant
     {
+        public int Size => VariantSize((uint) _value);
+
+
         private readonly int _value;
+
 
         public VarInt(int value) { _value = value; }
 
-        public string ToString(IFormatProvider cultureInfo) => _value.ToString(cultureInfo);
+
+        public byte[] Encode() => Encode(_value);
+
 
         public override string ToString() => _value.ToString();
 
-        public byte[] InByteArray()
+        public static VarInt Parse(string str) => int.Parse(str);
+        
+        public static byte[] Encode(VarInt value) => Variant.Encode((uint) value._value);
+        public static int Encode(VarInt value, byte[] buffer, int offset)
         {
-            var value = (uint) _value;
+            var encoded = value.Encode();
+            Buffer.BlockCopy(encoded, 0, buffer, offset, encoded.Length);
+            return encoded.Length;
+        }
+        public static int Encode(VarInt value, Stream stream)
+        {
+            var encoded = value.Encode();
+            stream.Write(encoded, 0, encoded.Length);
+            return encoded.Length;
+        }
 
-            var bytes = new List<byte>();
-            while (true)
-            {
-                if ((value & 0xFFFFFF80u) == 0)
-                {
-                    bytes.Add((byte) value);
-                    break;
-                }
-                bytes.Add((byte) (value & 0x7F | 0x80));
-                value >>= 7;
-            }
-
-            return bytes.ToArray();
+        public new static VarInt Decode(byte[] buffer, int offset) => new VarInt((int) Variant.Decode(buffer, offset));
+        public new static VarInt Decode(Stream stream) => new VarInt((int) Variant.Decode(stream));
+        public static int Decode(byte[] buffer, int offset, out VarInt result)
+        {
+            result = Decode(buffer, offset);
+            return result.Size;
+        }
+        public static int Decode(Stream stream, out VarInt result)
+        {
+            result = Decode(stream);
+            return result.Size;
         }
 
 
-        public static implicit operator VarInt(int value) => new VarInt(value);
+        public static implicit operator VarInt(short value) => new VarInt(value);
+        public static implicit operator short(VarInt value) => (short) value._value;
 
+        public static implicit operator VarInt(int value) => new VarInt(value);
         public static implicit operator int(VarInt value) => value._value;
 
-        public static VarInt Parse(string @string, IFormatProvider provider) => int.Parse(@string, provider);
+        public static implicit operator VarInt(long value) => new VarInt((int) value);
+        public static implicit operator long(VarInt value) => value._value;
     }
 }

@@ -42,7 +42,7 @@ namespace Aragas.Core.Wrappers
 
         public static bool LoadSettings<T>(string filename, T value)
         {
-            var config = ConfigWrapper.CreateConfig();
+            var config = ConfigWrapper.Create();
 
             using (var stream = Instance.SettingsFolder.CreateFileAsync($"{filename}.{config.FileExtension}", CreationCollisionOption.OpenIfExists).Result.OpenAsync(FileAccess.ReadAndWrite).Result)
             using (var reader = new StreamReader(stream))
@@ -87,7 +87,7 @@ namespace Aragas.Core.Wrappers
         }
         public static bool SaveSettings<T>(string filename, T defaultValue = default(T))
         {
-            var config = ConfigWrapper.CreateConfig();
+            var config = ConfigWrapper.Create();
 
             using (var stream = Instance.SettingsFolder.CreateFileAsync($"{filename}.{config.FileExtension}", CreationCollisionOption.OpenIfExists).Result.OpenAsync(FileAccess.ReadAndWrite).Result)
             using (var writer = new StreamWriter(stream))

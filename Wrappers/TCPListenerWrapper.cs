@@ -15,7 +15,7 @@ namespace Aragas.Core.Wrappers
 
     public interface ITCPListenerWrapper
     {
-        ITCPListener CreateTCPListener(UInt16 port);
+        ITCPListener Create(UInt16 port);
     }
 
     public static class TCPListenerWrapper
@@ -32,6 +32,6 @@ namespace Aragas.Core.Wrappers
             set { _instance = value; }
         }
 
-        public static ITCPListener CreateTCPListener(ushort port) { return Instance.CreateTCPListener(port); }
+        public static ITCPListener Create(ushort port) { return Instance.Create(port); }
     }
 }

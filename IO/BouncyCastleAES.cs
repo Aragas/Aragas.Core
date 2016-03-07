@@ -1,4 +1,5 @@
-﻿using Aragas.Core.Interfaces;
+﻿using System.IO;
+
 using Aragas.Core.Wrappers;
 
 using Org.BouncyCastle.Crypto;
@@ -8,40 +9,26 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 namespace Aragas.Core.IO
 {
-    public sealed class BouncyCastleAES : IAesStream
+    /// <summary>
+    /// BouncyCastle's AesStream implementation.
+    /// </summary>
+    public partial class BouncyCastleAes : AesStream
     {
-        private readonly ITCPClient _tcp;
+        private ITCPClient TCPClient { get; }
+        protected override Stream BaseStream => TCPClient.GetStream();
 
-        private readonly BufferedBlockCipher _decryptCipher;
-        private readonly BufferedBlockCipher _encryptCipher;
+        private BufferedBlockCipher DecryptCipher { get; }
+        private BufferedBlockCipher EncryptCipher { get; }
 
-        public BouncyCastleAES(ITCPClient tcp, byte[] key)
+        public BouncyCastleAes(ITCPClient tcp, byte[] key)
         {
-            _tcp = tcp;
+            TCPClient = tcp;
 
-            _encryptCipher = new BufferedBlockCipher(new CfbBlockCipher(new AesFastEngine(), 8));
-            _encryptCipher.Init(true, new ParametersWithIV(new KeyParameter(key), key, 0, 16));
+            EncryptCipher = new BufferedBlockCipher(new CfbBlockCipher(new AesFastEngine(), 8));
+            EncryptCipher.Init(true, new ParametersWithIV(new KeyParameter(key), key, 0, 16));
 
-            _decryptCipher = new BufferedBlockCipher(new CfbBlockCipher(new AesFastEngine(), 8));
-            _decryptCipher.Init(false, new ParametersWithIV(new KeyParameter(key), key, 0, 16));
-        }
-
-        public void EncryptByteArray(byte[] array)
-        {
-            var encrypted = _encryptCipher.ProcessBytes(array, 0, array.Length);
-            _tcp.WriteByteArray(encrypted);
-        }
-        public byte[] DecryptByteArray(int length)
-        {
-            var buffer = _tcp.ReadByteArray(length);
-            return _decryptCipher.ProcessBytes(buffer, 0, length);
-        }
-
-        public void Dispose()
-        {
-            _decryptCipher?.Reset();
-
-            _encryptCipher?.Reset();
+            DecryptCipher = new BufferedBlockCipher(new CfbBlockCipher(new AesFastEngine(), 8));
+            DecryptCipher.Init(false, new ParametersWithIV(new KeyParameter(key), key, 0, 16));
         }
     }
 }
