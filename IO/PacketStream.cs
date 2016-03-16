@@ -1,6 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
-using Aragas.Core.Data;
 using Aragas.Core.Packets;
 
 namespace Aragas.Core.IO
@@ -20,7 +21,7 @@ namespace Aragas.Core.IO
     /// <summary>
     /// 
     /// </summary>
-    public abstract partial class PacketStream
+    public abstract partial class PacketStream : IDisposable
     {
         public abstract bool IsServer { get; }
         public abstract string Host { get; }
@@ -33,59 +34,31 @@ namespace Aragas.Core.IO
         public abstract void Connect(string ip, ushort port);
         public abstract void Disconnect();
 
-        public abstract void SendPacket<TIDType, TPacketType>(ref Packet<TIDType, TPacketType> packet) where TPacketType : Packet;
+        public abstract void SendPacket(Packet packet);
 
 
-        #region Write
+        #region ExtendWrite
 
-        public abstract void Write(string value, int length = 0);
+        private static readonly Dictionary<int, Action<PacketStream, object>> WriteExtendedList = new Dictionary<int, Action<PacketStream, object>>();
 
-        public abstract void Write(VarShort value);
-        public abstract void Write(VarZShort value);
-        public abstract void Write(VarInt value);
-        public abstract void Write(VarZInt value);
-        public abstract void Write(VarLong value);
-        public abstract void Write(VarZLong value);
+        public static void ExtendWrite<T>(Action<PacketStream, T> action) { WriteExtendedList.Add(typeof(T).GetHashCode(), Change(action)); }
 
-        public abstract void Write(bool value);
+        private static Action<PacketStream, object> Change<T>(Action<PacketStream, T> action) => action == null ? (Action<PacketStream, object>) null : ((stream, value) => action(stream, (T) value));
 
-        public abstract void Write(sbyte value);
-        public abstract void Write(byte value);
+        protected static bool ExtendWriteContains<T>() => ExtendWriteContains(typeof(T));
 
-        public abstract void Write(short value);
-        public abstract void Write(ushort value);
+        protected static bool ExtendWriteContains(Type type) => WriteExtendedList.ContainsKey(type.GetHashCode());
 
-        public abstract void Write(int value);
-        public abstract void Write(uint value);
+        /// <summary>
+        /// Use <see cref="ExtendWriteContains"/> before calling this.
+        /// </summary>
+        protected static void ExtendWriteExecute<T>(PacketStream stream, T value) { WriteExtendedList[typeof (T).GetHashCode()](stream, value); }
 
-        public abstract void Write(long value);
-        public abstract void Write(ulong value);
+        #endregion ExtendWrite
 
-        public abstract void Write(double value);
-
-        public abstract void Write(float value);
+        public abstract void Write<T>(T value = default(T));
 
 
-        public abstract void Write(string[] value);
-
-        public abstract void Write(int[] value);
-
-        public abstract void Write(VarShort[] value);
-        public abstract void Write(VarZShort[] value);
-        public abstract void Write(VarInt[] value);
-        public abstract void Write(VarZInt[] value);
-        public abstract void Write(VarLong[] value);
-        public abstract void Write(VarZLong[] value);
-
-        public abstract void Write(byte[] value);
-
-        #endregion Write
-
-
-        #region Read
-
-        public abstract VarInt ReadVarInt();
-
-        #endregion Read
+        public abstract void Dispose();
     }
 }

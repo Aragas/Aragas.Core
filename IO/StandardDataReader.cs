@@ -7,7 +7,7 @@ namespace Aragas.Core.IO
     /// <summary>
     /// Data reader that uses int for length decoding.
     /// </summary>
-    public class StandardDataReader : PacketDataReader
+    public sealed class StandardDataReader : PacketDataReader
     {
         public override bool IsServer { get; }
 

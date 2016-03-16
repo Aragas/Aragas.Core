@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Aragas.Core.Data
 {
@@ -16,15 +17,15 @@ namespace Aragas.Core.Data
         public VarZShort(short value) { _value = value; }
 
 
-        public byte[] Encode() => Encode(_value);
+        public byte[] Encode() => Encode(new VarZShort(_value));
 
 
-        public static VarZShort Parse(string str) => short.Parse(str);
+        public static VarZShort Parse(string str) => new VarZShort(short.Parse(str));
 
-        public static byte[] Encode(VarZShort value) => VarShort.Encode(ZigZagEncode(value));
+        public static byte[] Encode(VarZShort value) => VarShort.Encode(new VarShort((short) ZigZagEncode(value)));
 
-        public new static VarZShort Decode(byte[] buffer, int offset) => ZigZagDecode(VarShort.Decode(buffer, offset));
-        public new static VarZShort Decode(Stream stream) => ZigZagDecode(VarShort.Decode(stream));
+        public new static VarZShort Decode(byte[] buffer, int offset) => new VarZShort((short) ZigZagDecode(VarShort.Decode(buffer, offset)));
+        public new static VarZShort Decode(Stream stream) => new VarZShort((short) ZigZagDecode(VarShort.Decode(stream)));
         public static int Decode(byte[] buffer, int offset, out VarZShort result)
         {
             result = Decode(buffer, offset);
@@ -37,13 +38,11 @@ namespace Aragas.Core.Data
         }
 
 
-        public static implicit operator VarZShort(short value) => new VarZShort(value);
+        public static explicit operator VarZShort(short value) => new VarZShort(value);
+
         public static implicit operator short(VarZShort value) => value._value;
-
-        public static implicit operator VarZShort(int value) => new VarZShort((short) value);
         public static implicit operator int(VarZShort value) => value._value;
-
-        public static implicit operator VarZShort(long value) => new VarZShort((short) value);
         public static implicit operator long(VarZShort value) => value._value;
+        public static implicit operator VarZShort(Enum value) => new VarZShort(Convert.ToInt16(value));
     }
 }

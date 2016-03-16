@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Aragas.Core.Data
 {
@@ -16,15 +17,15 @@ namespace Aragas.Core.Data
         public VarZInt(int value) { _value = value; }
 
 
-        public byte[] Encode() => Encode(_value);
+        public byte[] Encode() => Encode(new VarZInt(_value));
 
 
-        public static VarZInt Parse(string str) => int.Parse(str);
+        public static VarZInt Parse(string str) => new VarZInt(int.Parse(str));
 
-        public static byte[] Encode(VarZInt value) => VarInt.Encode(ZigZagEncode(value._value));
+        public static byte[] Encode(VarZInt value) => VarInt.Encode(new VarInt((int) ZigZagEncode(value._value)));
 
-        public new static VarZInt Decode(byte[] buffer, int offset) => ZigZagDecode(VarInt.Decode(buffer, offset));
-        public new static VarZInt Decode(Stream stream) => ZigZagDecode(VarInt.Decode(stream));
+        public new static VarZInt Decode(byte[] buffer, int offset) => new VarZInt((int) ZigZagDecode(VarInt.Decode(buffer, offset)));
+        public new static VarZInt Decode(Stream stream) => new VarZInt((int) ZigZagDecode(VarInt.Decode(stream)));
         public static int Decode(byte[] buffer, int offset, out VarZInt result)
         {
             result = Decode(buffer, offset);
@@ -37,13 +38,12 @@ namespace Aragas.Core.Data
         }
 
 
-        public static implicit operator VarZInt(short value) => new VarZInt(value);
+        public static explicit operator VarZInt(short value) => new VarZInt(value);
+        public static explicit operator VarZInt(int value) => new VarZInt(value);
+
         public static implicit operator short(VarZInt value) => (short) value._value;
-
-        public static implicit operator VarZInt(int value) => new VarZInt(value);
         public static implicit operator int(VarZInt value) => value._value;
-
-        public static implicit operator VarZInt(long value) => new VarZInt((int) value);
         public static implicit operator long(VarZInt value) => value._value;
+        public static implicit operator VarZInt(Enum value) => new VarZInt(Convert.ToInt32(value));
     }
 }

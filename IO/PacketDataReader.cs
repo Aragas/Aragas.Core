@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using ExtendReadFunc = System.Func<Aragas.Core.IO.PacketDataReader, int, object>;
-
 namespace Aragas.Core.IO
 {
     /// <summary>
@@ -15,9 +13,11 @@ namespace Aragas.Core.IO
 
         #region ExtendRead
 
-        private static readonly Dictionary<int, ExtendReadFunc> ReadExtendedList = new Dictionary<int, ExtendReadFunc>();
+        private static readonly Dictionary<int, Func<PacketDataReader, int, object>> ReadExtendedList = new Dictionary<int, Func<PacketDataReader, int, object>>();
 
-        public static void ExtendRead<T>(ExtendReadFunc func) { ReadExtendedList.Add(typeof(T).GetHashCode(), func); }
+        public static void ExtendRead<T>(Func<PacketDataReader, int, T> func) { ReadExtendedList.Add(typeof(T).GetHashCode(), Change(func)); }
+
+        private static Func<PacketDataReader, int, object> Change<T>(Func<PacketDataReader, int, T> action) => action == null ? (Func<PacketDataReader, int, object>) null : ((reader, length) => action(reader, length));
 
         protected static bool ExtendReadContains<T>() => ExtendReadContains(typeof(T));
 

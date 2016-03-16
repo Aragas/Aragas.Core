@@ -11,7 +11,7 @@ namespace Aragas.Core.Data
     {
         public int Size => Length.Size + _value.Length;
 
-        private VarLong Length => new VarLong(_value.Length);
+        private VarInt Length => new VarInt(_value.Length);
         private readonly string _value;
 
 
@@ -56,7 +56,7 @@ namespace Aragas.Core.Data
         }
         public new static VarString Decode(Stream stream)
         {
-            var length = VarLong.Decode(stream);
+            var length = VarInt.Decode(stream);
             var stringArray = new byte[length];
             stream.Read(stringArray, 0, length);
             return new VarString(Encoding.UTF8.GetString(stringArray, 0, stringArray.Length));

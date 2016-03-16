@@ -17,12 +17,12 @@ namespace Aragas.Core.Data
         public VarInt(int value) { _value = value; }
 
 
-        public byte[] Encode() => Encode(_value);
+        public byte[] Encode() => Encode(new VarInt(_value));
 
 
         public override string ToString() => _value.ToString();
 
-        public static VarInt Parse(string str) => int.Parse(str);
+        public static VarInt Parse(string str) => new VarInt(int.Parse(str));
         
         public static byte[] Encode(VarInt value) => Variant.Encode((uint) value._value);
         public static int Encode(VarInt value, byte[] buffer, int offset)
@@ -52,13 +52,12 @@ namespace Aragas.Core.Data
         }
 
 
-        public static implicit operator VarInt(short value) => new VarInt(value);
+        public static explicit operator VarInt(short value) => new VarInt(value);
+        public static explicit operator VarInt(int value) => new VarInt(value);
+
         public static implicit operator short(VarInt value) => (short) value._value;
-
-        public static implicit operator VarInt(int value) => new VarInt(value);
         public static implicit operator int(VarInt value) => value._value;
-
-        public static implicit operator VarInt(long value) => new VarInt((int) value);
         public static implicit operator long(VarInt value) => value._value;
+        public static implicit operator VarInt(Enum value) => new VarInt(Convert.ToInt32(value));
     }
 }

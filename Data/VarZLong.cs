@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Aragas.Core.Data
 {
@@ -16,15 +17,15 @@ namespace Aragas.Core.Data
         public VarZLong(long value) { _value = value; }
 
 
-        public byte[] Encode() => Encode(_value);
+        public byte[] Encode() => Encode(new VarZLong(_value));
 
 
-        public static VarZLong Parse(string str) => long.Parse(str);
+        public static VarZLong Parse(string str) => new VarZLong(long.Parse(str));
 
-        public static byte[] Encode(VarZLong value) => VarLong.Encode(ZigZagEncode(value));
+        public static byte[] Encode(VarZLong value) => VarLong.Encode(new VarLong(ZigZagEncode(value)));
 
-        public new static VarZLong Decode(byte[] buffer, int offset) => ZigZagDecode(VarLong.Decode(buffer, offset));
-        public new static VarZLong Decode(Stream stream) => ZigZagDecode(VarLong.Decode(stream));
+        public new static VarZLong Decode(byte[] buffer, int offset) => new VarZLong(ZigZagDecode(VarLong.Decode(buffer, offset)));
+        public new static VarZLong Decode(Stream stream) => new VarZLong(ZigZagDecode(VarLong.Decode(stream)));
         public static int Decode(byte[] buffer, int offset, out VarZLong result)
         {
             result = Decode(buffer, offset);
@@ -37,13 +38,13 @@ namespace Aragas.Core.Data
         }
 
 
-        public static implicit operator VarZLong(short value) => new VarZLong(value);
+        public static explicit operator VarZLong(short value) => new VarZLong(value);
+        public static explicit operator VarZLong(int value) => new VarZLong(value);
+        public static explicit operator VarZLong(long value) => new VarZLong(value);
+
         public static implicit operator short(VarZLong value) => (short) value._value;
-
-        public static implicit operator VarZLong(int value) => new VarZLong(value);
         public static implicit operator int(VarZLong value) => (int) value._value;
-
-        public static implicit operator VarZLong(long value) => new VarZLong((int) value);
         public static implicit operator long(VarZLong value) => value._value;
+        public static implicit operator VarZLong(Enum value) => new VarZLong(Convert.ToInt64(value));
     }
 }

@@ -11,7 +11,7 @@ namespace Aragas.Core.IO
     /// <summary>
     /// Stream that uses variant for length encoding.
     /// </summary>
-    public class ProtobufStream : PacketStream, IEncryptedStream, ICompressedStream
+    public sealed class ProtobufStream : PacketStream, IEncryptedStream, ICompressedStream
     {
         public override bool IsServer { get; }
 
@@ -21,7 +21,7 @@ namespace Aragas.Core.IO
         public override int DataAvailable => TCPClient?.DataAvailable ?? 0;
 
 
-        public bool EncryptionEnabled { get; protected set; }
+        public bool EncryptionEnabled { get; private set; }
 
         private Encoding Encoding { get; } = Encoding.UTF8;
 
@@ -30,7 +30,7 @@ namespace Aragas.Core.IO
         private AesStream AesStream { get; set; }
 
         protected override Stream BaseStream => EncryptionEnabled ? AesStream : TCPClient.GetStream();
-        protected MemoryStream BufferStream { get; } = new MemoryStream();
+        private byte[] _buffer;
 
 
         public ProtobufStream(ITCPClient tcp, bool isServer = false)
@@ -47,31 +47,97 @@ namespace Aragas.Core.IO
         public void InitializeEncryption(byte[] key)
         {
             AesStream = new BouncyCastleAes(TCPClient, key);
-
             EncryptionEnabled = true;
         }
 
 
         #region Write
-        
-        // -- String
-        public override void Write(string value, int length = 0)
-        {
-            byte[] lengthBytes;
-            byte[] final;
 
+        // -- Anything
+        public override void Write<T>(T value = default(T))
+        {
+            var type = typeof(T);
+
+            if (type == typeof (string))
+                WriteString((string) (object) value);
+
+            if (type == typeof (VarShort))
+                WriteVarShort((VarShort) (object) value);
+            if (type == typeof (VarZShort))
+                WriteVarZShort((VarZShort) (object) value);
+            if (type == typeof (VarInt))
+                WriteVarInt((VarInt) (object) value);
+            if (type == typeof (VarZInt))
+                WriteVarZInt((VarZInt) (object) value);
+            if (type == typeof (VarLong))
+                WriteVarLong((VarLong) (object) value);
+            if (type == typeof (VarZLong[]))
+                WriteVarZLong((VarZLong) (object) value);
+
+
+            if (type == typeof (bool))
+                WriteBoolean((bool) (object) value);
+
+            if (type == typeof (sbyte))
+                WriteSByte((sbyte) (object) value);
+            if (type == typeof (byte))
+                WriteByte((byte) (object) value);
+
+            if (type == typeof (short))
+                WriteShort((short) (object) value);
+            if (type == typeof (ushort))
+                WriteUShort((ushort) (object) value);
+
+            if (type == typeof (int))
+                WriteInt((int) (object) value);
+            if (type == typeof (uint))
+                WriteUInt((uint) (object) value);
+
+            if (type == typeof (long))
+                WriteLong((long) (object) value);
+            if (type == typeof (ulong))
+                WriteULong((ulong) (object) value);
+
+            if (type == typeof (float))
+                WriteFloat((float) (object) value);
+
+            if (type == typeof (double))
+                WriteDouble((double) (object) value);
+
+
+            if (ExtendWriteContains(type))
+                ExtendWriteExecute(this, value);
+
+
+            if (type == typeof (string[]))
+                WriteStringArray((string[]) (object) value);
+            if (type == typeof (VarShort[]))
+                WriteVarShortArray((VarShort[]) (object) value);
+            if (type == typeof (VarZShort[]))
+                WriteVarZShortArray((VarZShort[]) (object) value);
+            if (type == typeof (VarInt[]))
+                WriteVarIntArray((VarInt[]) (object) value);
+            if (type == typeof (VarZInt[]))
+                WriteVarZIntArray((VarZInt[]) (object) value);
+            if (type == typeof (VarLong[]))
+                WriteVarLongArray((VarLong[]) (object) value);
+            if (type == typeof (VarZLong[]))
+                WriteVarZLongArray((VarZLong[]) (object) value);
+            if (type == typeof (int[]))
+                WriteIntArray((int[]) (object) value);
+            if (type == typeof (byte[]))
+                WriteByteArray((byte[]) (object) value);
+        }
+
+        // -- String
+        private void WriteString(string value, int length = 0)
+        {
             if (length == 0)
-            {
                 length = value.Length;
 
-                lengthBytes = VarInt.Encode(value.Length);
-                final = new byte[value.Length + lengthBytes.Length];
-            }
-            else
-            {
-                lengthBytes = VarInt.Encode(length);
-                final = new byte[length + lengthBytes.Length];
-            }
+            var lengthBytes = new VarInt(value.Length).Encode();
+            var final = new byte[value.Length + lengthBytes.Length];
+            
 
             Buffer.BlockCopy(lengthBytes, 0, final, 0, lengthBytes.Length);
             Buffer.BlockCopy(Encoding.GetBytes(value), 0, final, lengthBytes.Length, length);
@@ -80,31 +146,31 @@ namespace Aragas.Core.IO
         }
 
         // -- Variants
-        public override void Write(VarShort value) { ToBuffer(value.Encode()); }
-        public override void Write(VarZShort value) { ToBuffer(value.Encode()); }
+        private void WriteVarShort(VarShort value) { ToBuffer(value.Encode()); }
+        private void WriteVarZShort(VarZShort value) { ToBuffer(value.Encode()); }
 
-        public override void Write(VarInt value) { ToBuffer(value.Encode()); }
-        public override void Write(VarZInt value) { ToBuffer(value.Encode()); }
+        private void WriteVarInt(VarInt value) { ToBuffer(value.Encode()); }
+        private void WriteVarZInt(VarZInt value) { ToBuffer(value.Encode()); }
 
-        public override void Write(VarLong value) { ToBuffer(value.Encode()); }
-        public override void Write(VarZLong value) { ToBuffer(value.Encode()); }
-    
+        private void WriteVarLong(VarLong value) { ToBuffer(value.Encode()); }
+        private void WriteVarZLong(VarZLong value) { ToBuffer(value.Encode()); }
+
         // -- Boolean
-        public override void Write(bool value) { Write(Convert.ToByte(value)); }
+        private void WriteBoolean(bool value) { Write(Convert.ToByte(value)); }
 
         // -- SByte & Byte
-        public override void Write(sbyte value) { Write(unchecked((byte) value)); }
-        public override void Write(byte value) { ToBuffer(new[] { value }); }
+        private void WriteSByte(sbyte value) { Write(unchecked((byte) value)); }
+        private void WriteByte(byte value) { ToBuffer(new[] { value }); }
 
         // -- Short & UShort
-        public override void Write(short value)
+        private void WriteShort(short value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
             ToBuffer(bytes);
         }
-        public override void Write(ushort value)
+        private void WriteUShort(ushort value)
         {
             ToBuffer(new[]
             {
@@ -114,14 +180,14 @@ namespace Aragas.Core.IO
         }
 
         // -- Int & UInt
-        public override void Write(int value)
+        private void WriteInt(int value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
             ToBuffer(bytes);
         }
-        public override void Write(uint value)
+        private void WriteUInt(uint value)
         {
             ToBuffer(new[]
             {
@@ -133,14 +199,14 @@ namespace Aragas.Core.IO
         }
 
         // -- Long & ULong
-        public override void Write(long value)
+        private void WriteLong(long value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
 
             ToBuffer(bytes);
         }
-        public override void Write(ulong value)
+        private void WriteULong(ulong value)
         {
             ToBuffer(new[]
             {
@@ -156,7 +222,7 @@ namespace Aragas.Core.IO
         }
 
         // -- Float
-        public override void Write(float value)
+        private void WriteFloat(float value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
@@ -165,7 +231,7 @@ namespace Aragas.Core.IO
         }
 
         // -- Double
-        public override void Write(double value)
+        private void WriteDouble(double value)
         {
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
@@ -174,7 +240,7 @@ namespace Aragas.Core.IO
         }
 
         // -- StringArray
-        public override void Write(string[] value)
+        private void WriteStringArray(string[] value)
         {
             Write(new VarInt(value.Length));
 
@@ -183,29 +249,14 @@ namespace Aragas.Core.IO
         }
 
         // -- Variable Array
-        public override void Write(VarShort[] value)
+        private void WriteVarShortArray(VarShort[] value)
         {
             Write(new VarInt(value.Length));
 
             for (var i = 0; i < value.Length; i++)
                 Write(value[i]);
         }
-        public override void Write(VarZShort[] value)
-        {
-            Write(new VarInt(value.Length));
-
-            for (var i = 0; i < value.Length; i++)
-                Write(value[i]);
-        }
-
-        public override void Write(VarInt[] value)
-        {
-            Write(new VarInt(value.Length));
-
-            for (var i = 0; i < value.Length; i++)
-                Write(value[i]);
-        }
-        public override void Write(VarZInt[] value)
+        private void WriteVarZShortArray(VarZShort[] value)
         {
             Write(new VarInt(value.Length));
 
@@ -213,14 +264,29 @@ namespace Aragas.Core.IO
                 Write(value[i]);
         }
 
-        public override void Write(VarLong[] value)
+        private void WriteVarIntArray(VarInt[] value)
         {
             Write(new VarInt(value.Length));
 
             for (var i = 0; i < value.Length; i++)
                 Write(value[i]);
         }
-        public override void Write(VarZLong[] value)
+        private void WriteVarZIntArray(VarZInt[] value)
+        {
+            Write(new VarInt(value.Length));
+
+            for (var i = 0; i < value.Length; i++)
+                Write(value[i]);
+        }
+
+        private void WriteVarLongArray(VarLong[] value)
+        {
+            Write(new VarInt(value.Length));
+
+            for (var i = 0; i < value.Length; i++)
+                Write(value[i]);
+        }
+        private void WriteVarZLongArray(VarZLong[] value)
         {
             Write(new VarInt(value.Length));
 
@@ -229,7 +295,7 @@ namespace Aragas.Core.IO
         }
 
         // -- IntArray
-        public override void Write(int[] value)
+        private void WriteIntArray(int[] value)
         {
             Write(new VarInt(value.Length));
 
@@ -238,12 +304,23 @@ namespace Aragas.Core.IO
         }
 
         // -- ByteArray
-        protected void ToBuffer(byte[] value) { BufferStream.Write(value, 0, value.Length); }
-        public override void Write(byte[] value)
+        private void WriteByteArray(byte[] value)
         {
             Write(new VarInt(value.Length));
 
             ToBuffer(value);
+        }
+
+
+        private void ToBuffer(byte[] value)
+        {
+            if (_buffer != null)
+            {
+                Array.Resize(ref _buffer, _buffer.Length + value.Length);
+                Array.Copy(value, 0, _buffer, _buffer.Length - value.Length, value.Length);
+            }
+            else
+                _buffer = value;
         }
 
         #endregion Write
@@ -251,7 +328,8 @@ namespace Aragas.Core.IO
 
         #region Read
 
-        public override VarInt ReadVarInt() { return VarInt.Decode(this); }
+        public VarInt ReadVarInt() { return VarInt.Decode(BaseStream); }
+
 
         #endregion Read
 
@@ -262,13 +340,11 @@ namespace Aragas.Core.IO
         public byte[] Receive(int length)
         {
             var buffer = new byte[length];
-
             BaseStream.Read(buffer, 0, buffer.Length);
-
             return buffer;
         }
 
-        public override void SendPacket<TIDType, TPacketType>(ref Packet<TIDType, TPacketType> packet)
+        public override void SendPacket(Packet packet)
         {
             var protobufPacket = packet as ProtobufPacket;
             Write(new VarInt(protobufPacket.ID));
@@ -277,19 +353,22 @@ namespace Aragas.Core.IO
         }
 
 
-        protected virtual void Purge()
+        private void Purge()
         {
-            var array = BufferStream.ToArray();
-
-            var lenBytes = VarInt.Encode(array.Length);
-            var tempBuff = new byte[array.Length + lenBytes.Length];
+            var lenBytes = new VarInt(_buffer.Length).Encode();
+            var tempBuff = new byte[_buffer.Length + lenBytes.Length];
 
             Array.Copy(lenBytes, 0, tempBuff, 0, lenBytes.Length);
-            Array.Copy(array, 0, tempBuff, lenBytes.Length, array.Length);
+            Array.Copy(_buffer, 0, tempBuff, lenBytes.Length, _buffer.Length);
 
             Send(tempBuff);
 
-            BufferStream.SetLength(0);
+            _buffer = null;
+        }
+
+        public override void Dispose()
+        {
+            _buffer = null;
         }
     }
 }

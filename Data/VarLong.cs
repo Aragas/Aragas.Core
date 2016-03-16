@@ -17,12 +17,12 @@ namespace Aragas.Core.Data
         public VarLong(long value) { _value = value; }
 
 
-        public byte[] Encode() => Encode(_value);
+        public byte[] Encode() => Encode(new VarLong(_value));
 
 
         public override string ToString() => _value.ToString();
 
-        public static VarLong Parse(string str) => long.Parse(str);
+        public static VarLong Parse(string str) => new VarLong(long.Parse(str));
 
         public static byte[] Encode(VarLong value) => Variant.Encode((ulong) value._value);
         public static int Encode(VarLong value, byte[] buffer, int offset)
@@ -52,13 +52,13 @@ namespace Aragas.Core.Data
         }
 
 
-        public static implicit operator VarLong(short value) => new VarLong(value);
+        public static explicit operator VarLong(short value) => new VarLong(value);
+        public static explicit operator VarLong(int value) => new VarLong(value);
+        public static explicit operator VarLong(long value) => new VarLong(value);
+
         public static implicit operator short(VarLong value) => (short) value._value;
-
-        public static implicit operator VarLong(int value) => new VarLong(value);
         public static implicit operator int(VarLong value) => (int) value._value;
-
-        public static implicit operator VarLong(long value) => new VarLong((int) value);
         public static implicit operator long(VarLong value) => value._value;
+        public static implicit operator VarLong(Enum value) => new VarLong(Convert.ToInt64(value));
     }
 }

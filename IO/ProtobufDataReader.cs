@@ -9,7 +9,7 @@ namespace Aragas.Core.IO
     /// <summary>
     /// Data reader that uses variants for length decoding.
     /// </summary>
-    public class ProtobufDataReader : PacketDataReader
+    public sealed class ProtobufDataReader : PacketDataReader
     {
         public override bool IsServer { get; }
 

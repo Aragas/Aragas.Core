@@ -26,7 +26,7 @@ namespace Aragas.Core.IO
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            var length = TCPClient.Read(buffer, offset, count);
+            var length = Stream.Read(buffer, offset, count);
             buffer = DecryptCipher.ProcessBytes(buffer, 0, buffer.Length);
             return length; // maybe buffer.Length?
         }
@@ -34,7 +34,7 @@ namespace Aragas.Core.IO
         public override int ReadByte()
         {
             var @byte = new byte[1];
-            var length = TCPClient.Read(@byte, 0, @byte.Length);
+            var length = Stream.Read(@byte, 0, @byte.Length);
             @byte = DecryptCipher.ProcessBytes(@byte, 0, @byte.Length);
             return @byte[0]; // maybe buffer.Length?
         }
@@ -46,13 +46,13 @@ namespace Aragas.Core.IO
         public override void Write(byte[] buffer, int offset, int count)
         {
             var encrypted = EncryptCipher.ProcessBytes(buffer, offset, count);
-            TCPClient.Write(encrypted, 0, encrypted.Length);
+            Stream.Write(encrypted, 0, encrypted.Length);
         }
 
         public override void WriteByte(byte value)
         {
             var encrypted = EncryptCipher.ProcessByte(value);
-            TCPClient.Write(encrypted, 0, encrypted.Length);
+            Stream.Write(encrypted, 0, encrypted.Length);
         }
 
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) { return BaseStream.WriteAsync(buffer, offset, count, cancellationToken); }

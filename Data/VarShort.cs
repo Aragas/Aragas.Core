@@ -17,12 +17,12 @@ namespace Aragas.Core.Data
         public VarShort(short value) { _value = value; }
 
 
-        public byte[] Encode() => Encode(_value);
+        public byte[] Encode() => Encode(new VarShort(_value));
 
 
         public override string ToString() => _value.ToString();
 
-        public static VarShort Parse(string str) => short.Parse(str);
+        public static VarShort Parse(string str) => new VarShort(short.Parse(str));
 
         public static byte[] Encode(VarShort value) => Variant.Encode((ushort) value._value);
         public static int Encode(VarShort value, byte[] buffer, int offset)
@@ -42,23 +42,21 @@ namespace Aragas.Core.Data
         public new static VarShort Decode(Stream stream) => new VarShort((short) Variant.Decode(stream));
         public static int Decode(byte[] buffer, int offset, out VarShort result)
         {
-            result = (short) Decode(buffer, offset);
+            result = Decode(buffer, offset);
             return result.Size;
         }
         public static int Decode(Stream stream, out VarShort result)
         {
-            result = (short) Decode(stream);
+            result = Decode(stream);
             return result.Size;
         }
 
 
-        public static implicit operator VarShort(short value) => new VarShort(value);
+        public static explicit operator VarShort(short value) => new VarShort(value);
+
         public static implicit operator short(VarShort value) => value._value;
-
-        public static implicit operator VarShort(int value) => new VarShort((short) value);
         public static implicit operator int(VarShort value) => value._value;
-
-        public static implicit operator VarShort(long value) => new VarShort((short) value);
         public static implicit operator long(VarShort value) => value._value;
+        public static implicit operator VarShort(Enum value) => new VarShort(Convert.ToInt16(value));
     }
 }
