@@ -34,6 +34,7 @@ namespace Aragas.Core.IO
         // -- Anything
         public override T Read<T>(T value = default(T), int length = 0)
         {
+            T val;
             var type = typeof(T);
 
             if (length > 0)
@@ -61,8 +62,8 @@ namespace Aragas.Core.IO
                     return (T) (object) ReadByteArray(length);
 
 
-                if(ExtendReadContains(type))
-                    return ExtendReadExecute<T>(this, length);
+                if(ExtendReadTryExecute(this, length, out val))
+                    return val;
 
 
                 return value;
@@ -116,8 +117,8 @@ namespace Aragas.Core.IO
                 return (T) (object) ReadDouble();
 
 
-            if (ExtendReadContains(type))
-                return ExtendReadExecute<T>(this);
+            if (ExtendReadTryExecute(this, length, out val))
+                return val;
 
 
             if (type == typeof (string[]))
@@ -155,14 +156,14 @@ namespace Aragas.Core.IO
         }
 
         // -- Variants
-        public VarShort ReadVarShort() { return VarShort.Decode(_stream); }
-        public VarZShort ReadVarZShort() { return VarZShort.Decode(_stream); }
+        private VarShort ReadVarShort() { return VarShort.Decode(_stream); }
+        private VarZShort ReadVarZShort() { return VarZShort.Decode(_stream); }
 
-        public VarInt ReadVarInt() { return VarInt.Decode(_stream); }
-        public VarZInt ReadVarZInt() { return VarZInt.Decode(_stream); }
+        private VarInt ReadVarInt() { return VarInt.Decode(_stream); }
+        private VarZInt ReadVarZInt() { return VarZInt.Decode(_stream); }
 
-        public VarLong ReadVarLong() { return VarLong.Decode(_stream); }
-        public VarZLong ReadVarZLong() { return VarZLong.Decode(_stream); }
+        private VarLong ReadVarLong() { return VarLong.Decode(_stream); }
+        private VarZLong ReadVarZLong() { return VarZLong.Decode(_stream); }
 
         // -- Boolean
         private bool ReadBoolean() { return Convert.ToBoolean(ReadByte()); }

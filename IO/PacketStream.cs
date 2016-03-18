@@ -41,18 +41,23 @@ namespace Aragas.Core.IO
 
         private static readonly Dictionary<int, Action<PacketStream, object>> WriteExtendedList = new Dictionary<int, Action<PacketStream, object>>();
 
-        public static void ExtendWrite<T>(Action<PacketStream, T> action) { WriteExtendedList.Add(typeof(T).GetHashCode(), Change(action)); }
+        public static void ExtendWrite<T>(Action<PacketStream, T> action)
+        {
+            if(action != null)
+                WriteExtendedList.Add(typeof(T).GetHashCode(), Transform(action));
+        }
 
-        private static Action<PacketStream, object> Change<T>(Action<PacketStream, T> action) => action == null ? (Action<PacketStream, object>) null : ((stream, value) => action(stream, (T) value));
-
+        private static Action<PacketStream, object> Transform<T>(Action<PacketStream, T> action) => (stream, value) => action(stream, (T) value);
+        
         protected static bool ExtendWriteContains<T>() => ExtendWriteContains(typeof(T));
-
         protected static bool ExtendWriteContains(Type type) => WriteExtendedList.ContainsKey(type.GetHashCode());
 
-        /// <summary>
-        /// Use <see cref="ExtendWriteContains"/> before calling this.
-        /// </summary>
-        protected static void ExtendWriteExecute<T>(PacketStream stream, T value) { WriteExtendedList[typeof (T).GetHashCode()](stream, value); }
+        protected static void ExtendWriteExecute<T>(PacketStream stream, T value)
+        {
+            Action<PacketStream, object> action;
+            if (WriteExtendedList.TryGetValue(typeof(T).GetHashCode(), out action))
+                action.Invoke(stream, value);
+        }
 
         #endregion ExtendWrite
 

@@ -29,7 +29,6 @@ namespace Aragas.Core.Data
 
 
         public PasswordStorage() { }
-
         public PasswordStorage(string data, bool doHash = true)
         {
             if (doHash)

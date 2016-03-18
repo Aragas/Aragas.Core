@@ -15,18 +15,25 @@ namespace Aragas.Core.IO
 
         private static readonly Dictionary<int, Func<PacketDataReader, int, object>> ReadExtendedList = new Dictionary<int, Func<PacketDataReader, int, object>>();
 
-        public static void ExtendRead<T>(Func<PacketDataReader, int, T> func) { ReadExtendedList.Add(typeof(T).GetHashCode(), Change(func)); }
-
-        private static Func<PacketDataReader, int, object> Change<T>(Func<PacketDataReader, int, T> action) => action == null ? (Func<PacketDataReader, int, object>) null : ((reader, length) => action(reader, length));
+        public static void ExtendRead<T>(Func<PacketDataReader, int, T> func)
+        {
+            if(func != null)
+                ReadExtendedList.Add(typeof(T).GetHashCode(), Transform(func));
+        }
+        private static Func<PacketDataReader, int, object> Transform<T>(Func<PacketDataReader, int, T> action) => (reader, length) => action(reader, length);
 
         protected static bool ExtendReadContains<T>() => ExtendReadContains(typeof(T));
-
         protected static bool ExtendReadContains(Type type) => ReadExtendedList.ContainsKey(type.GetHashCode());
 
-        /// <summary>
-        /// Use <see cref="ExtendReadContains"/> before calling this.
-        /// </summary>
-        protected static T ExtendReadExecute<T>(PacketDataReader reader, int length = 0) => (T) ReadExtendedList[typeof(T).GetHashCode()](reader, length);
+        protected static T ExtendReadExecute<T>(PacketDataReader reader, int length = 0) => ExtendReadContains<T>() ? (T) ReadExtendedList[typeof (T).GetHashCode()](reader, length) : default(T);
+        protected static bool ExtendReadTryExecute<T>(PacketDataReader reader, int length, out T value)
+        {
+            Func<PacketDataReader, int, object> func;
+            var exist = ReadExtendedList.TryGetValue(typeof(T).GetHashCode(), out func);
+            value = exist ? (T) func.Invoke(reader, length) : default(T);
+            
+            return exist;
+        }
 
         #endregion ExtendRead
 

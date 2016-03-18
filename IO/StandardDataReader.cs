@@ -32,6 +32,7 @@ namespace Aragas.Core.IO
         // -- Anything
         public override T Read<T>(T value = default(T), int length = 0)
         {
+            T val;
             var type = typeof(T);
 
             if (length > 0)
@@ -47,8 +48,8 @@ namespace Aragas.Core.IO
                     return (T) (object) ReadByteArray(length);
 
 
-                if(ExtendReadContains(type))
-                    return ExtendReadExecute<T>(this, length);
+                if (ExtendReadTryExecute(this, length, out val))
+                    return val;
 
 
                 return value;
@@ -88,8 +89,8 @@ namespace Aragas.Core.IO
                 return (T) (object) ReadDouble();
 
 
-            if (ExtendReadContains(type))
-                return ExtendReadExecute<T>(this);
+            if (ExtendReadTryExecute(this, length, out val))
+                return val;
 
 
             if (type == typeof (string[]))

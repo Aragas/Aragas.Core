@@ -61,72 +61,72 @@ namespace Aragas.Core.IO
             if (type == typeof (string))
                 WriteString((string) (object) value);
 
-            if (type == typeof (VarShort))
+            else if (type == typeof (VarShort))
                 WriteVarShort((VarShort) (object) value);
-            if (type == typeof (VarZShort))
+            else if (type == typeof (VarZShort))
                 WriteVarZShort((VarZShort) (object) value);
-            if (type == typeof (VarInt))
+            else if (type == typeof (VarInt))
                 WriteVarInt((VarInt) (object) value);
-            if (type == typeof (VarZInt))
+            else if (type == typeof (VarZInt))
                 WriteVarZInt((VarZInt) (object) value);
-            if (type == typeof (VarLong))
+            else if (type == typeof (VarLong))
                 WriteVarLong((VarLong) (object) value);
-            if (type == typeof (VarZLong[]))
+            else if (type == typeof (VarZLong[]))
                 WriteVarZLong((VarZLong) (object) value);
 
 
-            if (type == typeof (bool))
+            else if (type == typeof (bool))
                 WriteBoolean((bool) (object) value);
 
-            if (type == typeof (sbyte))
+            else if (type == typeof (sbyte))
                 WriteSByte((sbyte) (object) value);
-            if (type == typeof (byte))
-                WriteByte((byte) (object) value);
+            else if (type == typeof (byte))
+                WriteUByte((byte) (object) value);
 
-            if (type == typeof (short))
+            else if (type == typeof (short))
                 WriteShort((short) (object) value);
-            if (type == typeof (ushort))
+            else if (type == typeof (ushort))
                 WriteUShort((ushort) (object) value);
 
-            if (type == typeof (int))
+            else if (type == typeof (int))
                 WriteInt((int) (object) value);
-            if (type == typeof (uint))
+            else if (type == typeof (uint))
                 WriteUInt((uint) (object) value);
 
-            if (type == typeof (long))
+            else if (type == typeof (long))
                 WriteLong((long) (object) value);
-            if (type == typeof (ulong))
+            else if (type == typeof (ulong))
                 WriteULong((ulong) (object) value);
 
-            if (type == typeof (float))
+            else if (type == typeof (float))
                 WriteFloat((float) (object) value);
 
-            if (type == typeof (double))
+            else if (type == typeof (double))
                 WriteDouble((double) (object) value);
 
 
-            if (ExtendWriteContains(type))
+            else if (ExtendWriteContains(type))
                 ExtendWriteExecute(this, value);
 
 
-            if (type == typeof (string[]))
+            else if (type == typeof (string[]))
                 WriteStringArray((string[]) (object) value);
-            if (type == typeof (VarShort[]))
-                WriteVarShortArray((VarShort[]) (object) value);
-            if (type == typeof (VarZShort[]))
-                WriteVarZShortArray((VarZShort[]) (object) value);
-            if (type == typeof (VarInt[]))
-                WriteVarIntArray((VarInt[]) (object) value);
-            if (type == typeof (VarZInt[]))
-                WriteVarZIntArray((VarZInt[]) (object) value);
-            if (type == typeof (VarLong[]))
-                WriteVarLongArray((VarLong[]) (object) value);
-            if (type == typeof (VarZLong[]))
-                WriteVarZLongArray((VarZLong[]) (object) value);
-            if (type == typeof (int[]))
+            else if (type == typeof (int[]))
                 WriteIntArray((int[]) (object) value);
-            if (type == typeof (byte[]))
+            else if (type == typeof (byte[]))
                 WriteByteArray((byte[]) (object) value);
+            else if (type == typeof (VarShort[]))
+                WriteVarShortArray((VarShort[]) (object) value);
+            else if (type == typeof (VarZShort[]))
+                WriteVarZShortArray((VarZShort[]) (object) value);
+            else if (type == typeof (VarInt[]))
+                WriteVarIntArray((VarInt[]) (object) value);
+            else if (type == typeof (VarZInt[]))
+                WriteVarZIntArray((VarZInt[]) (object) value);
+            else if (type == typeof (VarLong[]))
+                WriteVarLongArray((VarLong[]) (object) value);
+            else if (type == typeof (VarZLong[]))
+                WriteVarZLongArray((VarZLong[]) (object) value);
         }
 
         // -- String
@@ -160,7 +160,7 @@ namespace Aragas.Core.IO
 
         // -- SByte & Byte
         private void WriteSByte(sbyte value) { Write(unchecked((byte) value)); }
-        private void WriteByte(byte value) { ToBuffer(new[] { value }); }
+        private void WriteUByte(byte value) { ToBuffer(new[] { value }); }
 
         // -- Short & UShort
         private void WriteShort(short value)
@@ -332,6 +332,7 @@ namespace Aragas.Core.IO
 
 
         #endregion Read
+
 
         public void Send(byte[] buffer)
         {
