@@ -1,48 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Aragas.Core.Wrappers
 {
-    public class CustomTypeInfo
+    [AttributeUsage(AttributeTargets.Property)]
+    public class PrimaryKeyAttribute : Attribute { }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class AutoIncrementAttribute : Attribute { }
+
+
+    public abstract class DatabaseTable { }
+    public abstract class DatabaseTable<TKeyType> : DatabaseTable
     {
-        public Type CustomType { get; set; }
-        public int Count { get; set; }
-    }
-
-    public class DatabaseTableInfo
-    {
-        public Type BaseType { get; }
-        public List<CustomTypeInfo> CustomTypes { get; } = new List<CustomTypeInfo>();
-
-        public DatabaseTableInfo(Type baseType) { BaseType = baseType; }
-    }
-
-    public abstract class DatabaseTable
-    {
-        private static List<DatabaseTableInfo> CustomTableTypes { get; } = new List<DatabaseTableInfo>();
-
-
-        public static DatabaseTableInfo GetCustomTableType<TBaseType>(TBaseType baseType = default(TBaseType)) where TBaseType : Type
-        {
-            return CustomTableTypes.FirstOrDefault(table => table.BaseType == baseType);
-        }
-        public static void AddCustomTableType<TBaseType>(TBaseType baseType = default(TBaseType)) where TBaseType : Type
-        {
-            if (GetCustomTableType(baseType) == null)
-                CustomTableTypes.Add(new DatabaseTableInfo(baseType));
-        }
-
-        public static void AddCustomType<TBaseType, TCustomType>(TBaseType baseType, TCustomType customType, int count) where TBaseType : Type where TCustomType : Type
-        {
-            if (GetCustomTableType(baseType) == null)
-                CustomTableTypes.Add(new DatabaseTableInfo(baseType));
-
-            GetCustomTableType(baseType).CustomTypes.Add(new CustomTypeInfo { CustomType = customType, Count = count });
-        }
-
-		public int Id { get; set; }
+        [PrimaryKey]
+		public abstract TKeyType Id { get; protected set; }
     }
 
     public abstract class Database

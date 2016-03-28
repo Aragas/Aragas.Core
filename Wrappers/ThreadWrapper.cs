@@ -20,6 +20,8 @@ namespace Aragas.Core.Wrappers
     public delegate void WaitCallback(object state);
     public interface IThreadWrapper
     {
+        int Threads { get; }
+
         //IThread CreateThread(Action action);
         IThread Create(ThreadStart action);
         IThread Create(ParameterizedThreadStart action);
@@ -45,6 +47,8 @@ namespace Aragas.Core.Wrappers
             }
             set { _instance = value; }
         }
+
+        public static int Threads => _instance.Threads;
 
         public static IThread Create(ThreadStart action) { return Instance.Create(action); }
         public static IThread Create(ParameterizedThreadStart action) { return Instance.Create(action); }

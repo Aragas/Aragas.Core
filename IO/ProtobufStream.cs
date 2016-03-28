@@ -336,10 +336,12 @@ namespace Aragas.Core.IO
 
         public void Send(byte[] buffer)
         {
+            // Try-Catch
             BaseStream.Write(buffer, 0, buffer.Length);
         }
         public byte[] Receive(int length)
         {
+            // Try-Catch
             var buffer = new byte[length];
             BaseStream.Read(buffer, 0, buffer.Length);
             return buffer;
