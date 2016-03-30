@@ -1,14 +1,16 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Aragas.Core.Data
 {
     /// <summary>
     /// Encoded Int16. Optimal for negative values. Using zig-zag encoding.
     /// </summary>
-    public class VarZShort : Variant
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct VarZShort : IEquatable<VarZShort>
     {
-        public int Size => VariantSize((ushort) ZigZagEncode(_value));
+        public int Size => Variant.VariantSize((ushort) Variant.ZigZagEncode(_value));
 
 
         private readonly short _value;
@@ -17,15 +19,15 @@ namespace Aragas.Core.Data
         public VarZShort(short value) { _value = value; }
 
 
-        public byte[] Encode() => Encode(new VarZShort(_value));
+        public byte[] Encode() => Encode(this);
 
 
         public static VarZShort Parse(string str) => new VarZShort(short.Parse(str));
 
-        public static byte[] Encode(VarZShort value) => VarShort.Encode(new VarShort((short) ZigZagEncode(value)));
+        public static byte[] Encode(VarZShort value) => VarShort.Encode(new VarShort((short) Variant.ZigZagEncode(value)));
 
-        public new static VarZShort Decode(byte[] buffer, int offset) => new VarZShort((short) ZigZagDecode(VarShort.Decode(buffer, offset)));
-        public new static VarZShort Decode(Stream stream) => new VarZShort((short) ZigZagDecode(VarShort.Decode(stream)));
+        public static VarZShort Decode(byte[] buffer, int offset) => new VarZShort((short) Variant.ZigZagDecode(VarShort.Decode(buffer, offset)));
+        public static VarZShort Decode(Stream stream) => new VarZShort((short) Variant.ZigZagDecode(VarShort.Decode(stream)));
         public static int Decode(byte[] buffer, int offset, out VarZShort result)
         {
             result = Decode(buffer, offset);
@@ -44,5 +46,22 @@ namespace Aragas.Core.Data
         public static implicit operator int(VarZShort value) => value._value;
         public static implicit operator long(VarZShort value) => value._value;
         public static implicit operator VarZShort(Enum value) => new VarZShort(Convert.ToInt16(value));
+
+
+        public static bool operator !=(VarZShort a, VarZShort b) => !a.Equals(b);
+        public static bool operator ==(VarZShort a, VarZShort b) => a.Equals(b);
+
+        public bool Equals(VarZShort value) => value._value.Equals(_value);
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((VarZShort) obj);
+        }
+        public override int GetHashCode() => _value.GetHashCode();
     }
 }

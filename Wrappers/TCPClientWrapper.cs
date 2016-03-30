@@ -10,16 +10,12 @@ namespace Aragas.Core.Wrappers
         Boolean Connected { get; }
         Int32 DataAvailable { get; }
 
-        Int32 RefreshConnectionInfoTime { get; set; }
+
+        Stream GetStream();
 
 
         ITCPClient Connect(String ip, UInt16 port);
         ITCPClient Disconnect();
-
-        int Write(byte[] buffer, int offset, int count);
-        int Read(byte[] buffer, int offset, int count);
-
-        Stream GetStream();
     }
 
     public interface ITCPClientFactory

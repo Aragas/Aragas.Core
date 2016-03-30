@@ -111,7 +111,7 @@ namespace Aragas.Core.Data
             if (obj.GetType() != GetType())
                 return false;
 
-            return Equals((Vector2)obj);
+            return Equals((Vector2) obj);
         }
 
         public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();

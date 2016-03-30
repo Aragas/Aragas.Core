@@ -2,9 +2,9 @@
 
 namespace Aragas.Core.Data
 {
-    public class Variant
+    internal abstract class Variant
     {
-        protected static int VariantSize(ulong value)
+        protected internal static int VariantSize(ulong value)
         {
             var outputSize = 0;
             while (value > 127)
@@ -15,7 +15,7 @@ namespace Aragas.Core.Data
             return ++outputSize;
         }
 
-        protected static byte[] Encode(ulong value)
+        protected internal static byte[] Encode(ulong value)
         {
             var size = VariantSize(value);
             var array = new byte[size];
@@ -30,7 +30,7 @@ namespace Aragas.Core.Data
             return array;
         }
 
-        protected static ulong Decode(byte[] buffer, int offset)
+        protected internal static ulong Decode(byte[] buffer, int offset)
         {
             ulong decodedValue = 0;
             int index = 0, shiftAmount = 0;
@@ -44,7 +44,7 @@ namespace Aragas.Core.Data
 
             return decodedValue;
         }
-        protected static ulong Decode(Stream stream)
+        protected internal static ulong Decode(Stream stream)
         {
             ulong decodedValue = 0;
             int shiftAmount = 0;
@@ -59,8 +59,8 @@ namespace Aragas.Core.Data
             return decodedValue;
         }
 
-        protected static long ZigZagEncode(long value) => (value << 1) ^ (value >> 63);
-        protected static long ZigZagDecode(long value)
+        protected internal static long ZigZagEncode(long value) => (value << 1) ^ (value >> 63);
+        protected internal static long ZigZagDecode(long value)
         {
             var temp = (((value << 63) >> 63) ^ value) >> 1;
             return temp ^ (value & (1L << 63));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Aragas.Core.Data
@@ -7,7 +8,8 @@ namespace Aragas.Core.Data
     /// <summary>
     /// Encoded String. Using VarLong as length.
     /// </summary>
-    public class VarString : Variant
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct VarString : IEquatable<VarString>
     {
         public int Size => Length.Size + _value.Length;
 
@@ -47,14 +49,14 @@ namespace Aragas.Core.Data
             return encoded.Length;
         }
 
-        public new static VarString Decode(byte[] buffer, int offset)
+        public static VarString Decode(byte[] buffer, int offset)
         {
             var length = VarLong.Decode(buffer, offset);
             var stringArray = new byte[length];
             Buffer.BlockCopy(buffer, length.Size + offset, stringArray, 0, stringArray.Length);
             return new VarString(Encoding.UTF8.GetString(stringArray, 0, stringArray.Length));
         }
-        public new static VarString Decode(Stream stream)
+        public static VarString Decode(Stream stream)
         {
             var length = VarInt.Decode(stream);
             var stringArray = new byte[length];
@@ -75,5 +77,22 @@ namespace Aragas.Core.Data
 
         public static implicit operator VarString(string value) => new VarString(value);
         public static implicit operator string(VarString value) => value._value;
+
+
+        public static bool operator !=(VarString a, VarString b) => !a.Equals(b);
+        public static bool operator ==(VarString a, VarString b) => a.Equals(b);
+
+        public bool Equals(VarString value) => value._value.Equals(_value);
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            if (obj.GetType() != GetType())
+                return false;
+
+            return Equals((VarString) obj);
+        }
+        public override int GetHashCode() => _value.GetHashCode();
     }
 }
