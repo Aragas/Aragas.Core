@@ -52,7 +52,7 @@ namespace Aragas.Core.IO
                     return val;
 
 
-                return value;
+                throw new NotImplementedException($"Type {type} not found in extend methods.");
             }
 
 
@@ -99,9 +99,9 @@ namespace Aragas.Core.IO
                 return (T) (object) ReadIntArray();
             if (type == typeof (byte[]))
                 return (T) (object) ReadByteArray();
-            
 
-            return value;
+
+            throw new NotImplementedException($"Type {type} not found in extend methods.");
         }
 
         // -- String

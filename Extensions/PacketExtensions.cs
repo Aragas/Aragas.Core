@@ -10,7 +10,7 @@ namespace Aragas.Core.Extensions
 {
     public static class PacketExtensions
     {
-        private static void Extend<T>(Func<PacketDataReader, int, T> readFunc, Action<PacketStream, T> writeAction)
+        private static void Extend<T>(Func<PacketDataReader, int, T> readFunc, Action<PacketStream, T, bool> writeAction)
         {
             ExtendRead(readFunc);
             ExtendWrite(writeAction);
@@ -24,7 +24,7 @@ namespace Aragas.Core.Extensions
             Extend<Vector3>(ReadVector3, WriteVector3);
         }
 
-        private static void WriteTimeSpan(PacketStream stream, TimeSpan value)
+        private static void WriteTimeSpan(PacketStream stream, TimeSpan value, bool writeDefaultLength = true)
         {
             stream.Write(value.Ticks);
         }
@@ -33,7 +33,7 @@ namespace Aragas.Core.Extensions
             return new TimeSpan(reader.Read<long>());
         }
 
-        private static void WriteDateTime(PacketStream stream, DateTime value)
+        private static void WriteDateTime(PacketStream stream, DateTime value, bool writeDefaultLength = true)
         {
             stream.Write(value.Ticks);
         }
@@ -42,7 +42,7 @@ namespace Aragas.Core.Extensions
             return new DateTime(reader.Read<long>());
         }
 
-        private static void WriteVector2(PacketStream stream, Vector2 value)
+        private static void WriteVector2(PacketStream stream, Vector2 value, bool writeDefaultLength = true)
         {
             stream.Write(value.X);
             stream.Write(value.Y);
@@ -52,7 +52,7 @@ namespace Aragas.Core.Extensions
             return new Vector2(reader.Read<float>(), reader.Read<float>());
         }
 
-        private static void WriteVector3(PacketStream stream, Vector3 value)
+        private static void WriteVector3(PacketStream stream, Vector3 value, bool writeDefaultLength = true)
         {
             stream.Write(value.X);
             stream.Write(value.Y);

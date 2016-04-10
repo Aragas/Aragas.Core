@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,16 +28,16 @@ namespace Aragas.Core.IO
         public override int Read(byte[] buffer, int offset, int count)
         {
             var length = Stream.Read(buffer, offset, count);
-            buffer = DecryptCipher.ProcessBytes(buffer, 0, buffer.Length);
-            return length; // maybe buffer.Length?
+            var decrypted = DecryptCipher.ProcessBytes(buffer, 0, length);
+            Buffer.BlockCopy(decrypted, 0, buffer, offset, decrypted.Length);
+            return length;
         }
 
         public override int ReadByte()
         {
             var @byte = new byte[1];
-            var length = Stream.Read(@byte, 0, @byte.Length);
-            @byte = DecryptCipher.ProcessBytes(@byte, 0, @byte.Length);
-            return @byte[0]; // maybe buffer.Length?
+            var length = Read(@byte, 0, 1);
+            return @byte[0];
         }
 
         public override long Seek(long offset, SeekOrigin origin) { return BaseStream.Seek(offset, origin); }

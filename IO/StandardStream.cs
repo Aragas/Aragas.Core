@@ -43,7 +43,7 @@ namespace Aragas.Core.IO
         #region Write
 
         // -- Anything
-        public override void Write<T>(T value = default(T))
+        public override void Write<T>(T value = default(T), bool writeDefaultLength = true)
         {
             var type = typeof(T);
 
@@ -85,11 +85,11 @@ namespace Aragas.Core.IO
 
 
             else if (type == typeof (string[]))
-                WriteStringArray((string[]) (object) value);
+                WriteStringArray((string[]) (object) value, writeDefaultLength);
             else if (type == typeof (int[]))
-                WriteIntArray((int[]) (object) value);
+                WriteIntArray((int[]) (object) value, writeDefaultLength);
             else if (type == typeof (byte[]))
-                WriteByteArray((byte[]) (object) value);
+                WriteByteArray((byte[]) (object) value, writeDefaultLength);
         }
 
         // -- String
@@ -202,27 +202,30 @@ namespace Aragas.Core.IO
         }
 
         // -- StringArray
-        private void WriteStringArray(string[] value)
+        private void WriteStringArray(string[] value, bool writeDefaultLength)
         {
-            Write(value.Length);
+            if(writeDefaultLength)
+                Write(value.Length);
 
             for (var i = 0; i < value.Length; i++)
                 Write(value[i]);
         }
 
         // -- IntArray
-        private void WriteIntArray(int[] value)
+        private void WriteIntArray(int[] value, bool writeDefaultLength)
         {
-            Write(value.Length);
+            if (writeDefaultLength)
+                Write(value.Length);
 
             for (var i = 0; i < value.Length; i++)
                 Write(value[i]);
         }
 
         // -- ByteArray
-        private void WriteByteArray(byte[] value)
+        private void WriteByteArray(byte[] value, bool writeDefaultLength)
         {
-            Write(value.Length);
+            if (writeDefaultLength)
+                Write(value.Length);
 
             ToBuffer(value);
         }

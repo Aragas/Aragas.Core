@@ -9,6 +9,7 @@ namespace Aragas.Core.IO
     /// <summary>
     /// Data reader that uses variants for length decoding.
     /// </summary>
+    /// <exception cref="NotImplementedException"></exception>
     public sealed class ProtobufDataReader : PacketDataReader
     {
         public override bool IsServer { get; }
@@ -51,7 +52,7 @@ namespace Aragas.Core.IO
                 if (type == typeof (VarInt[]))
                     return (T) (object) ReadVarIntArray(length);
                 if (type == typeof (VarZInt[]))
-                    return (T) (object) ReadVarIntArray(length);
+                    return (T) (object) ReadVarZIntArray(length);
                 if (type == typeof (VarLong[]))
                     return (T) (object) ReadVarLongArray(length);
                 if (type == typeof (VarZLong[]))
@@ -66,7 +67,7 @@ namespace Aragas.Core.IO
                     return val;
 
 
-                return value;
+                throw new NotImplementedException($"Type {type} not found in extend methods.");
             }
 
 
@@ -130,7 +131,7 @@ namespace Aragas.Core.IO
             if (type == typeof (VarInt[]))
                 return (T) (object) ReadVarIntArray();
             if (type == typeof (VarZInt[]))
-                return (T) (object) ReadVarIntArray();
+                return (T) (object) ReadVarZIntArray();
             if (type == typeof (VarLong[]))
                 return (T) (object) ReadVarLongArray();
             if (type == typeof (VarZLong[]))
@@ -141,7 +142,7 @@ namespace Aragas.Core.IO
                 return (T) (object) ReadByteArray();
             
 
-            return value;
+            throw new NotImplementedException($"Type {type} not found in extend methods.");
         }
 
         // -- String
@@ -212,15 +213,14 @@ namespace Aragas.Core.IO
         }
         private ulong ReadULong()
         {
-            return unchecked(
-                   ((ulong) ReadByte() << 56) |
+            return ((ulong) ReadByte() << 56) |
                    ((ulong) ReadByte() << 48) |
                    ((ulong) ReadByte() << 40) |
                    ((ulong) ReadByte() << 32) |
                    ((ulong) ReadByte() << 24) |
                    ((ulong) ReadByte() << 16) |
                    ((ulong) ReadByte() << 8) |
-                    (ulong) ReadByte());
+                    (ulong) ReadByte();
         }
 
         // -- Floats

@@ -39,29 +39,29 @@ namespace Aragas.Core.IO
 
         #region ExtendWrite
 
-        private static readonly Dictionary<int, Action<PacketStream, object>> WriteExtendedList = new Dictionary<int, Action<PacketStream, object>>();
+        private static readonly Dictionary<int, Action<PacketStream, object, bool>> WriteExtendedList = new Dictionary<int, Action<PacketStream, object, bool>>();
 
-        public static void ExtendWrite<T>(Action<PacketStream, T> action)
+        public static void ExtendWrite<T>(Action<PacketStream, T, bool> action)
         {
             if(action != null)
                 WriteExtendedList.Add(typeof(T).GetHashCode(), Transform(action));
         }
 
-        private static Action<PacketStream, object> Transform<T>(Action<PacketStream, T> action) => (stream, value) => action(stream, (T) value);
+        private static Action<PacketStream, object, bool> Transform<T>(Action<PacketStream, T, bool> action) => (stream, value, writedef) => action(stream, (T) value, writedef);
         
         protected static bool ExtendWriteContains<T>() => ExtendWriteContains(typeof(T));
         protected static bool ExtendWriteContains(Type type) => WriteExtendedList.ContainsKey(type.GetHashCode());
 
-        protected static void ExtendWriteExecute<T>(PacketStream stream, T value)
+        protected static void ExtendWriteExecute<T>(PacketStream stream, T value, bool writeDefaultLength = true)
         {
-            Action<PacketStream, object> action;
+            Action<PacketStream, object, bool> action;
             if (WriteExtendedList.TryGetValue(typeof(T).GetHashCode(), out action))
-                action.Invoke(stream, value);
+                action.Invoke(stream, value, writeDefaultLength);
         }
 
         #endregion ExtendWrite
 
-        public abstract void Write<T>(T value = default(T));
+        public abstract void Write<TDataType>(TDataType value = default(TDataType), bool writeDefaultLength = true);
 
 
         public abstract void Dispose();
