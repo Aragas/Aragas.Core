@@ -63,6 +63,7 @@ namespace Aragas.Core.IO
 
         public abstract void Write<TDataType>(TDataType value = default(TDataType), bool writeDefaultLength = true);
 
+        public abstract byte[] GetBuffer();
 
         public abstract void Dispose();
     }

@@ -50,6 +50,8 @@ namespace Aragas.Core.IO
             EncryptionEnabled = true;
         }
 
+        public override byte[] GetBuffer() => _buffer;
+
 
         #region Write
 

@@ -40,6 +40,9 @@ namespace Aragas.Core.IO
         public override void Disconnect() { TCPClient.Disconnect(); }
 
 
+        public override byte[] GetBuffer() => _buffer;
+
+
         #region Write
 
         // -- Anything

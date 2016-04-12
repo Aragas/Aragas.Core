@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data\PinnedObject.cs" />
     <Compile Include="Data\Variant.cs" />
     <Compile Include="Data\VarZShort.cs" />
     <Compile Include="Data\VarZInt.cs" />
