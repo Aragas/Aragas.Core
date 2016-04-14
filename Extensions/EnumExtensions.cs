@@ -19,7 +19,7 @@ namespace Aragas.Core.Extensions
             {
                 var typeName = $"{packetName}Packet";
                 var type = AppDomainWrapper.GetTypeFromNameAndAbstract<TPacket>(typeName, assembly);
-                packets[(int) packetName] = type != null ? (Func<TPacket>) (() => (TPacket) Activator.CreateInstance(type)) : null;
+                packets[(int) packetName] = type != null ? (Func<TPacket>) (() => (TPacket) ActivatorCached.CreateInstance(type)) : null;
             }
 
             return packets;
@@ -33,7 +33,7 @@ namespace Aragas.Core.Extensions
             {
                 var typeName = $"{packetName}Packet";
                 var type = AppDomainWrapper.GetTypeFromNameAndAbstract<TPacket>(typeName, assembly);
-                packets[(int) packetName] = type != null ? (Func<TPacket>) (() => (TPacket) Activator.CreateInstance(type)) : null;
+                packets[(int) packetName] = type != null ? (Func<TPacket>) (() => (TPacket) ActivatorCached.CreateInstance(type)) : null;
             }
         }
         public static void CreatePacketInstancesRef<TPacket>(this Enum packetType, ref Func<TPacket>[] packets, Assembly assembly) where TPacket : Packet
@@ -50,7 +50,7 @@ namespace Aragas.Core.Extensions
             {
                 var typeName = $"{packetName}Packet";
                 var type = AppDomainWrapper.GetTypeFromNameAndAbstract<TPacket>(typeName, assembly);
-                packets[(int) packetName] = type != null ? (Func<TPacket>) (() => (TPacket) Activator.CreateInstance(type)) : null;
+                packets[(int) packetName] = type != null ? (Func<TPacket>) (() => (TPacket) ActivatorCached.CreateInstance(type)) : null;
             }
         }
 
@@ -65,7 +65,7 @@ namespace Aragas.Core.Extensions
                 var typeName = $"{packetName}Handler";
                 var type = AppDomainWrapper.GetTypeFromName(typeName, assembly);
                 if (type != null)
-                    packets[(int) packetName] = (context) => new ContextFunc<TPacket>((PacketHandler) Activator.CreateInstance(type)).SetContext(context);
+                    packets[(int) packetName] = context => new ContextFunc<TPacket>((PacketHandler) ActivatorCached.CreateInstance(type)).SetContext(context);
                 else
                     packets[(int) packetName] = null;
             }
@@ -82,9 +82,9 @@ namespace Aragas.Core.Extensions
                 var typeName = $"{packetName}Handler";
                 var type = AppDomainWrapper.GetTypeFromName(typeName, assembly);
                 if (type != null)
-                    packets[(int)packetName] = (context) => new ContextFunc<TPacket>((PacketHandler) Activator.CreateInstance(type)).SetContext(context);
+                    packets[(int) packetName] = context => new ContextFunc<TPacket>((PacketHandler) ActivatorCached.CreateInstance(type)).SetContext(context);
                 else
-                    packets[(int)packetName] = null;
+                    packets[(int) packetName] = null;
             }
         }
         public static void CreateHandlerInstancesRef<TPacket>(this Enum packetType, ref Func<IPacketHandlerContext, ContextFunc<TPacket>>[] packets, Assembly assembly) where TPacket : Packet
@@ -102,7 +102,7 @@ namespace Aragas.Core.Extensions
                 var typeName = $"{packetName}Handler";
                 var type = AppDomainWrapper.GetTypeFromName(typeName, assembly);
                 if (type != null)
-                    packets[(int) packetName] = (context) => new ContextFunc<TPacket>((PacketHandler) Activator.CreateInstance(type)).SetContext(context);
+                    packets[(int) packetName] = context => new ContextFunc<TPacket>((PacketHandler) ActivatorCached.CreateInstance(type)).SetContext(context);
                 else
                     packets[(int) packetName] = null;
             }

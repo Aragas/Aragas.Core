@@ -46,6 +46,7 @@
     <Compile Include="Data\VarInt.cs" />
     <Compile Include="Data\Vector2.cs" />
     <Compile Include="Data\Vector3.cs" />
+    <Compile Include="ActivatorCached.cs" />
     <Compile Include="PacketHandlers\ContextFunc.cs" />
     <Compile Include="Extensions\Vector2Extensions.cs" />
     <Compile Include="Extensions\Vector3Extensions.cs" />

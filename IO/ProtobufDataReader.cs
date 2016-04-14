@@ -36,7 +36,7 @@ namespace Aragas.Core.IO
         public override T Read<T>(T value = default(T), int length = 0)
         {
             T val;
-            var type = typeof(T);
+            var type = value != null? value.GetType() : typeof(T);
 
             if (length > 0)
             {

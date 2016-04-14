@@ -58,7 +58,7 @@ namespace Aragas.Core.IO
         // -- Anything
         public override void Write<T>(T value = default(T), bool writeDefaultLength = true)
         {
-            var type = typeof(T);
+            var type = value.GetType();
 
             if (type == typeof (string))
                 WriteString((string) (object) value);
