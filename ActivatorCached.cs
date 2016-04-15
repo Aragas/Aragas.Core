@@ -55,6 +55,8 @@ namespace Aragas.Core
             return result(args);
         }
 
+        // Mono has problems with it
+        /*
         /// <summary>
         /// Faster implementation of <see cref="Activator.CreateInstance{T}()"/>.
         /// <para/>
@@ -65,6 +67,7 @@ namespace Aragas.Core
             var type = input == null ? typeof (T) : input.GetType();
             return (T) CreateInstance(type);
         }
+        */
 
 
         public static void ClearCache() { Cache.Clear(); }
