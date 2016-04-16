@@ -12,50 +12,43 @@ namespace Aragas.Core.Data
         public readonly float X;
         public readonly float Y;
 
+
         public Vector2(float value) { X = Y = value; }
-
         public Vector2(float x, float y) { X = x; Y = y; }
-
         public Vector2(double x, double y) { X = (float) x; Y = (float) y; }
-
-        public Vector2(Vector2 Vector2) { X = Vector2.X; Y = Vector2.Y; }
+        public Vector2(Vector2 v) { X = v.X; Y = v.Y; }
 
 
         /// <summary>
         /// Converts this Vector2 to a string.
         /// </summary>
-        /// <returns></returns>
         public override string ToString() => $"X: {X}, Y: {Y}";
 
         #region Math
 
-        public static Vector2 Floor(Vector2 Vector2) => new Vector2(Math.Floor(Vector2.X), Math.Floor(Vector2.Y));
+        public static Vector2 Floor(Vector2 value) => new Vector2(Math.Floor(value.X), Math.Floor(value.Y));
         public Vector2 Floor() => Floor(this);
 
-        public static Vector2 Ceiling(Vector2 Vector2) => new Vector2(Math.Ceiling(Vector2.X), Math.Ceiling(Vector2.Y));
+        public static Vector2 Ceiling(Vector2 value) => new Vector2(Math.Ceiling(value.X), Math.Ceiling(value.Y));
         public Vector2 Ceiling() => Ceiling(this);
 
-
-        private static double Square(double num) => num * num;
-
-        /// <summary>
-        /// Calculates the distance between two Vector2 objects.
-        /// </summary>
-        public double DistanceTo(Vector2 other) => Math.Sqrt(Square(other.X - X) + Square(other.Y - Y));
+        private static float Square(float num) => num * num;
+        public static float DistanceTo(Vector2 a, Vector2 b) => a.DistanceTo(b);
+        public float DistanceTo(Vector2 other) => (float) Math.Sqrt(Square(other.X - X) + Square(other.Y - Y));
 
         /// <summary>
         /// Finds the distance of this vector from Vector2.Zero
         /// </summary>
         public double Distance() => DistanceTo(Zero);
 
-        public static Vector2 Min(Vector2 value1, Vector2 value2) => new Vector2(Math.Min(value1.X, value2.X), Math.Min(value1.Y, value2.Y));
-        public Vector2 Min(Vector2 value2) => new Vector2(Math.Min(X, value2.X), Math.Min(Y, value2.Y));
+        public static Vector2 Min(Vector2 a, Vector2 b) => new Vector2(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
+        public Vector2 Min(Vector2 other) => new Vector2(Math.Min(X, other.X), Math.Min(Y, other.Y));
 
-        public static Vector2 Max(Vector2 value1, Vector2 value2) => new Vector2(Math.Max(value1.X, value2.X), Math.Max(value1.Y, value2.Y));
-        public Vector2 Max(Vector2 value2) => new Vector2(Math.Max(X, value2.X), Math.Max(Y, value2.Y));
+        public static Vector2 Max(Vector2 a, Vector2 b) => new Vector2(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
+        public Vector2 Max(Vector2 other) => new Vector2(Math.Max(X, other.X), Math.Max(Y, other.Y));
 
-        public static Vector2 Delta(Vector2 firstLocation, Vector2 secondLocation) => new Vector2(firstLocation.X - secondLocation.X, firstLocation.Y - secondLocation.Y);
-        public Vector2 Delta(Vector2 secondLocation) => new Vector2(X - secondLocation.X, Y - secondLocation.Y);
+        public static Vector2 Delta(Vector2 a, Vector2 b) => new Vector2(a.X - b.X, a.Y - b.Y);
+        public Vector2 Delta(Vector2 other) => new Vector2(X - other.X, Y - other.Y);
 
         #endregion
 
@@ -64,8 +57,7 @@ namespace Aragas.Core.Data
         public static Vector2 operator -(Vector2 a) => new Vector2(-a.X, -a.Y);
         public static Vector2 operator ++(Vector2 a) => new Vector2(a.X, a.Y) + 1.0;
         public static Vector2 operator --(Vector2 a) => new Vector2(a.X, a.Y) - 1.0;
-
-
+        
         public static bool operator !=(Vector2 a, Vector2 b) => !a.Equals(b);
         public static bool operator ==(Vector2 a, Vector2 b) => a.Equals(b);
         public static bool operator >(Vector2 a, Vector2 b) => a.X > b.X && a.Y > b.Y;
@@ -100,9 +92,6 @@ namespace Aragas.Core.Data
 
         #endregion
 
-        public bool Equals(Vector2 other) => other.X.Equals(X) && other.Y.Equals(Y);
-        public bool Equals(float other) => other.Equals(X) && other.Equals(Y);
-
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -111,8 +100,16 @@ namespace Aragas.Core.Data
             if (obj.GetType() != GetType())
                 return false;
 
-            return Equals((Vector2) obj);
+            if (obj is float)
+                return Equals((float) obj);
+
+            if (obj is Vector2)
+                return Equals((Vector2) obj);
+
+            return false;
         }
+        public bool Equals(float other) => other.Equals(X) && other.Equals(Y);
+        public bool Equals(Vector2 other) => other.X.Equals(X) && other.Y.Equals(Y);
 
         public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
     }
